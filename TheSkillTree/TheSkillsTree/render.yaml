@@ -8,7 +8,7 @@ services:
       npm run build --prefix TheSkillTree/theme/static_src
       python manage.py collectstatic --noinput
       python manage.py migrate
-    startCommand: gunicorn TheSkillTree.TheSkillsTree.TheSkillsTree.wsgi
+    startCommand: gunicorn TheSkillTree.TheSkillsTree.wsgi
     envVars:
       - key: PYTHON_VERSION
         value: 3.12.3
