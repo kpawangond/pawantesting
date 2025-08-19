@@ -1,0 +1,58 @@
+{% load static tailwind_tags %}
+
+<section class="py-16 sm:py-20">
+    <div class="container mx-auto flex flex-col lg:flex-row items-center px-6 text-gray-800">
+        <!-- Image -->
+        <div class="lg:w-1/2 mt-12 lg:mt-0 relative flex justify-center">
+            <img src="{% static 'img/aboutSection.webp' %}" alt="About Rector"
+                class="w-[60%] sm:w-[70%] md:w-[80%] lg:w-[75%] object-cover mr-auto drop-shadow-sm" />
+        </div>
+
+        <!-- Content -->
+        <div class="lg:w-1/2 text-center lg:text-left mt-12 lg:mt-0">
+            <p class="text-blue-600 font-semibold text-lg sm:text-xl">
+                About The Skills Tree
+            </p>
+            <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold sm:mt-4" style="line-height: 1.2;">
+                Ready to Give Your Child
+                <br class="hidden sm:block" />
+                an Academic <span class="text-blue-600">Advantage?</span>
+            </h1>
+            <p class="text-gray-600 mt-4 text-base sm:text-lg md:text-xl">
+                Set your child up for success with our <span
+                class="font-semibold">highly acclaimed, personalized learning programs in Math, ELA, and Public Speaking.</span> Our <span
+                class="font-semibold"> live, online, 1:1 & small-group classes</span>  are designed to challenge, engage, and accelerate learning—helping students stay ahead with confidence.
+            </p>
+            <!-- Key Features -->
+            <ul class="mt-6 text-left space-y-4 text-gray-700 text-base sm:text-lg md:text-xl">
+                <li class="flex items-start">
+                    <span class="mr-3 text-xl">✔</span>
+                    <span>Tailored lessons to fit every child’s learning style</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="mr-3 text-xl">✔</span>
+                    <span>Expert instructors who make learning fun & effective</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="mr-3 text-xl">✔</span>
+                    <span>Proven results, Visible skill improvement within 3 months.</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="mr-3 text-xl"></span>
+                    <span></span>
+                </li>
+                <li class="flex items-start">
+                    <span class="mr-3 text-xl">📢</span>
+                    <span>Give your child the competitive edge they deserve. Book a Free Trial Today!</span>
+                </li>
+            </ul>
+            <!-- Button -->
+            <div class="mt-6 flex sm:flex-row gap-4 items-center justify-center lg:justify-start w-full sm:w-auto">
+                <a
+                    class="bg-blue-600 text-white px-6 py-3 rounded-full hover:bg-button-hover-primary transition duration-300 sm:w-auto">
+                    Learn More About Us
+                </a>
+            </div>
+        </div>
+    </div>
+</section>

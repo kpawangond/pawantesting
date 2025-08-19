@@ -1,0 +1,51 @@
+{% load static tailwind_tags %}
+{% load bootstrap_icons %}
+
+<section class="py-12 sm:py-16 bg-blue-50">
+    <div class="container mx-auto flex flex-col lg:flex-row items-stretch px-4 sm:px-6 gap-6 lg:gap-12">
+        
+        <!-- Contact Section -->
+        <div class="lg:w-1/2 flex justify-center lg:justify-start">
+            <div class="bg-white rounded-lg shadow-md p-8 w-full max-w-xl h-[450px] flex flex-col justify-center">
+                <div class="text-center">
+                    <h2 class="text-2xl sm:text-3xl font-bold leading-snug text-gray-800">📍Where We Operate</h2>
+                    <p class="text-gray-600 mt-4 text-sm sm:text-base md:text-lg">
+                        We provide <span class="text-blue-600">online learning solutions</span> and 
+                        <span class="text-blue-600">accessible across the USA, ensuring</span> flexible and personalized education 
+                        <span class="text-blue-600">for every student.</span>
+                    </p>
+
+                    
+                </div>
+            </div>
+        </div>
+        
+        <!-- Social Media Section -->
+        <div class="lg:w-1/2 flex justify-center lg:justify-end">
+            <div class="bg-white rounded-lg shadow-md p-8 w-full max-w-xl h-[450px] flex flex-col justify-center">
+                <div class="text-center">
+                    <h2 class="text-2xl sm:text-3xl font-bold leading-snug text-gray-800 mb-4">📱 Stay Connected</h2>
+                    <p class="text-gray-600 mt-4 text-sm sm:text-base md:text-lg">
+                        Stay updated with course launches, free resources, and student success stories!
+                    </p>
+                    
+                    <div class="flex justify-center gap-6 mt-6">
+                        <a href="#" class="text-blue-600 hover:text-blue-800 transform hover:scale-110 transition-transform" aria-label="Facebook">
+                            {% bs_icon 'facebook' size='2rem' %}
+                        </a>
+                        <a href="#" class="text-blue-700 hover:text-blue-900 transform hover:scale-110 transition-transform" aria-label="LinkedIn">
+                            {% bs_icon 'linkedin' size='2rem' %}
+                        </a>
+                        <a href="#" class="text-pink-600 hover:text-pink-800 transform hover:scale-110 transition-transform" aria-label="Instagram">
+                            {% bs_icon 'instagram' size='2rem' %}
+                        </a>
+                        <a href="#" class="text-red-600 hover:text-red-800 transform hover:scale-110 transition-transform" aria-label="YouTube">
+                            {% bs_icon 'youtube' size='2rem' %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</section>

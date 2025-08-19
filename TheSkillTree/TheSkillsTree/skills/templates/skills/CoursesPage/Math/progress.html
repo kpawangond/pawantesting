@@ -1,0 +1,316 @@
+<style>
+    .timeline {
+        position: relative;
+        max-width: 1500px;
+        margin: 0 auto;
+        padding: 50px 20px;
+    }
+
+    .timeline ul {
+        padding: 0;
+        margin: 0;
+        position: relative;
+    }
+
+    .default-line {
+        content: '';
+        position: absolute;
+        left: 50%;
+        width: 4px;
+        background: #bdc3c7;
+        height: 100%;
+        transform: translateX(-50%);
+    }
+
+    .draw-line {
+        width: 4px;
+        height: 0;
+        position: absolute;
+        left: 50%;
+        background: #2563eb;
+        transform: translateX(-50%);
+        z-index: 1;
+    }
+
+    .timeline ul li {
+        list-style-type: none;
+        position: relative;
+        width: 50%;
+        padding: 30px 40px;
+        box-sizing: border-box;
+        min-height: 150px;
+        display: flex;
+        align-items: center;
+    }
+
+    .timeline ul li:nth-child(odd) {
+        float: left;
+        clear: right;
+        text-align: right;
+        justify-content: flex-end;
+    }
+
+    .timeline ul li:nth-child(even) {
+        float: right;
+        clear: left;
+        text-align: left;
+    }
+
+    .timeline ul li::before {
+        content: '';
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        background: #bdc3c7;
+        border-radius: 50%;
+        top: 50%;
+        transform: translateY(-50%);
+        transition: all 0.4s ease-in-out;
+        z-index: 2;
+    }
+
+    .timeline ul li:nth-child(odd)::before {
+        right: -8px;
+    }
+
+    .timeline ul li:nth-child(even)::before {
+        left: -8px;
+    }
+
+    .timeline ul li.in-view::before {
+        width: 40px;
+        height: 40px;
+        background-color: #2563eb;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
+        background-size: 20px 20px;
+        background-repeat: no-repeat;
+        background-position: center;
+        border: 3px solid #2563eb;
+        transition: all 0.4s ease-in-out;
+    }
+
+    .timeline ul li.in-view:nth-child(odd)::before {
+        right: -20px;
+    }
+
+    .timeline ul li.in-view:nth-child(even)::before {
+        left: -20px;
+    }
+
+    .timeline ul li .content {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        transition: all 0.4s ease-in-out;
+        opacity: 0;
+        transform: translateY(20px);
+        max-width: 700px;
+        position: relative;
+    }
+
+    .timeline ul li.in-view .content {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .timeline ul li .content h3 {
+        color: #2563eb;
+        font-size: 1.3rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .timeline ul li .content p {
+        color: #666;
+        line-height: 1.5;
+    }
+
+    /* Clearfix for the timeline */
+    .timeline ul:after {
+        content: '';
+        display: block;
+        clear: both;
+    }
+
+    /* Responsive styling */
+    @media screen and (max-width: 768px) {
+        .timeline ul li {
+            width: 100%;
+            padding-left: 70px;
+            padding-right: 20px;
+            text-align: left;
+            justify-content: flex-start;
+            min-height: auto;
+        }
+
+        .timeline ul li:nth-child(odd) {
+            float: none;
+            clear: both;
+            text-align: left;
+            justify-content: flex-start;
+        }
+
+        .timeline ul li:nth-child(even) {
+            float: none;
+            clear: both;
+        }
+
+        .default-line,
+        .draw-line {
+            left: 40px;
+        }
+
+        .timeline ul li::before,
+        .timeline ul li:nth-child(odd)::before,
+        .timeline ul li:nth-child(even)::before {
+            left: 32px;
+            top: 35px;
+            transform: none;
+        }
+
+        .timeline ul li.in-view:nth-child(odd)::before,
+        .timeline ul li.in-view:nth-child(even)::before {
+            left: 20px;
+            top: 35px;
+        }
+
+        .timeline ul li .content,
+        .timeline ul li:nth-child(odd) .content,
+        .timeline ul li:nth-child(even) .content {
+            max-width: 100%;
+        }
+
+        .timeline ul li:nth-child(odd) .content::after,
+        .timeline ul li:nth-child(even) .content::after {
+            left: -15px;
+            right: auto;
+        }
+    }
+</style>
+
+<section class="py-20 bg-gradient-to-b from-[rgba(240,247,255,0.9)] to-[rgba(209,231,255,0.9)]">
+    <div class="container mx-auto px-6">
+        <!-- Section Header -->
+        <div class="text-center mb-16">
+            <h2 class="text-3xl sm:text-4xl font-bold text-gray-900">Your Child's Success Path in Our Math Program</h2>
+        </div>
+
+        <div class="timeline">
+            <ul>
+                <span class="default-line"></span>
+                <span class="draw-line"></span>
+
+                <!-- Step 1 -->
+                <li>
+                    <div class="content">
+                        <h3>Step 1: Diagnostic Assessment</h3>
+                        <p>We begin with a comprehensive assessment to identify your child's strengths and learning
+                            gaps.
+                            This gives us a clear starting point to design their personal learning journey.</p>
+                    </div>
+                </li>
+
+                <!-- Step 2 -->
+                <li>
+                    <div class="content">
+                        <h3>Step 2: Personalized Learning Plan</h3>
+                        <p>Based on assessment results, we create a customized curriculum tailored to address specific
+                            needs
+                            and learning style, ensuring maximum progress and engagement.</p>
+                    </div>
+                </li>
+
+                <!-- Step 3 -->
+                <li>
+                    <div class="content">
+                        <h3>Step 3: Concept Mastery Sessions</h3>
+                        <p>Interactive lessons with expert guidance help students build strong foundations. Our
+                            educators
+                            use innovative teaching methods to make complex concepts easy to understand.</p>
+                    </div>
+                </li>
+
+                <!-- Step 4 -->
+                <li>
+                    <div class="content">
+                        <h3>Step 4: Skill Refinement & Practice</h3>
+                        <p>Through hands-on learning activities and doubt-solving classes, students develop
+                            problem-solving
+                            abilities and gain confidence in applying mathematical concepts.</p>
+                    </div>
+                </li>
+
+                <!-- Step 5 -->
+                <li>
+                    <div class="content">
+                        <h3>Step 5: Progress Evaluation</h3>
+                        <p>Regular assessments and real-time feedback ensure continuous improvement. Parents receive
+                            detailed progress reports highlighting achievements and areas for growth.</p>
+                    </div>
+                </li>
+
+                <!-- Step 6 -->
+                <li>
+                    <div class="content">
+                        <h3>Step 6: Accelerated Growth & Promotion</h3>
+                        <p>Students advance to the next level once they demonstrate mastery of current concepts,
+                            ensuring a
+                            solid foundation before tackling more advanced mathematical challenges.</p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var items = $(".timeline li"),
+                timelineHeight = $(".timeline ul").height(),
+                greyLine = $('.default-line'),
+                lineToDraw = $('.draw-line');
+
+            // Set the height of the grey line according to timeline height
+            greyLine.css({
+                'height': timelineHeight + 'px'
+            });
+
+            // Handle scroll events
+            $(window).on('scroll', function () {
+                // Get current positions and heights
+                var redLineHeight = lineToDraw.height(),
+                    greyLineHeight = greyLine.height(),
+                    windowDistance = $(window).scrollTop(),
+                    windowHeight = $(window).height() / 2,
+                    timelineDistance = $(".timeline").offset().top;
+
+                // Draw the blue line as we scroll
+                if (windowDistance >= timelineDistance - windowHeight) {
+                    line = windowDistance - timelineDistance + windowHeight;
+                    if (line <= greyLineHeight) {
+                        lineToDraw.css({
+                            'height': line + 'px'
+                        });
+                    }
+                }
+
+                // Add in-view class to items when blue line reaches them
+                var bottom = lineToDraw.offset().top + lineToDraw.outerHeight(true);
+                items.each(function (index) {
+                    var itemPosition = $(this).offset().top + $(this).height() / 2;
+                    if (bottom > itemPosition) {
+                        $(this).addClass('in-view');
+                    } else {
+                        $(this).removeClass('in-view');
+                    }
+                });
+            });
+
+            // Trigger scroll event on page load to initialize
+            $(window).trigger('scroll');
+        });
+    </script>
+    </body>
+
+    </html>

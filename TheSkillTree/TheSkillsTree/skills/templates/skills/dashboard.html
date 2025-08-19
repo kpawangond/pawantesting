@@ -1,0 +1,843 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% tailwind_css %}
+</head>
+
+<body class="bg-gray-50 text-gray-800">
+
+    {% include 'skills/navbar.html' %}
+
+    <div class="flex h-screen border-t">
+        <!-- Sidebar -->
+        <div class="w-64 bg-white border-r">
+            <div class="p-6">
+                <h2 class="text-xl font-bold mb-6">Dashboard</h2>
+                <nav class="space-y-2">
+                    <button onclick="showSection('event')"
+                        class="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 font-medium"
+                        id="tab-event">Event</button>
+                    <button onclick="showSection('learn')"
+                        class="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 font-medium"
+                        id="tab-learn">Learn</button>
+                    <button onclick="showSection('practice')"
+                        class="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 font-medium"
+                        id="tab-practice">Practice/Tests</button>
+                    <button onclick="showSection('progress')"
+                        class="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 font-medium"
+                        id="tab-progress">Progress</button>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 p-8 overflow-y-auto">
+            <!-- Event Section -->
+            <div id="section-event" class="section">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold">Events</h2>
+                </div>
+
+                <div class="flex gap-8">
+                    <!-- Calendar -->
+                    <div class="flex-1 bg-white rounded-lg p-6" style="box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;">
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="flex items-center gap-4">
+                                <h3 class="text-xl font-semibold" id="calendar-month-year"></h3>
+                                <div class="flex gap-2">
+                                    <button onclick="changeMonth(-1)"
+                                        class="p-2 rounded-lg bg-yellow-300 text-black hover:bg-yellow-400">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M15 19l-7-7 7-7"></path>
+                                        </svg>
+                                    </button>
+                                    <button onclick="changeMonth(1)"
+                                        class="p-2 rounded-lg bg-yellow-300 text-black hover:bg-yellow-400">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M9 5l7 7-7 7"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Calendar Grid -->
+                        <div class="grid grid-cols-7 gap-1">
+                            <!-- Day Headers -->
+                            <div class="text-center font-medium p-3">Monday</div>
+                            <div class="text-center font-medium p-3">Tuesday</div>
+                            <div class="text-center font-medium p-3">Wednesday</div>
+                            <div class="text-center font-medium p-3">Thursday</div>
+                            <div class="text-center font-medium p-3">Friday</div>
+                            <div class="text-center font-medium p-3">Saturday</div>
+                            <div class="text-center font-medium p-3">Sunday</div>
+                        </div>
+                        <div id="calendar-grid" class="grid grid-cols-7 gap-1 mt-2"></div>
+                    </div>
+
+                    <!-- Event List -->
+                    <div class="w-80">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold">Events</h3>
+                            <span id="selected-date-display" class="text-sm text-gray-500"></span>
+                        </div>
+
+                        <div id="event-list" class="space-y-3 max-h-96 overflow-y-auto">
+                            <!-- Events will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Learn Section -->
+            <div id="section-learn" class="section hidden">
+                <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-4">
+                    <h2 class="text-2xl font-bold text-gray-800">Learn</h2>
+
+                    <!-- Search and Filter Controls -->
+                    <div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+                        <!-- Topic Dropdown Filter -->
+                        <div class="relative w-full sm:w-48">
+                            <select id="topicFilter"
+                                class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                                <option value="">All Topics</option>
+                                {% for topic in unique_topics %}
+                                <option value="{{ topic|lower }}">{{ topic }}</option>
+                                {% empty %}
+                                <option value="" disabled>No topics available</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Search Input -->
+                        <div class="relative flex-grow">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                            </div>
+                            <input type="text" id="materialSearch" placeholder="Search materials..."
+                                class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg">
+                    {% if student_materials %}
+                    <div class="bg-white shadow rounded-lg overflow-hidden">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-blue-700">
+                                <tr>
+                                    <th class="px-6 py-4 font-semibold text-white uppercase tracking-wider">
+                                        S.No</th>
+                                    <th class="px-6 py-4 font-semibold text-white uppercase tracking-wider">
+                                        Subject</th>
+                                    <th class="px-6 py-4 font-semibold text-white uppercase tracking-wider">
+                                        Topic</th>
+                                    <th class="px-6 py-4 font-semibold text-white uppercase tracking-wider">
+                                        Sub Topic</th>
+                                    <th class="px-6 py-4 font-semibold text-white uppercase tracking-wider">
+                                        File Link</th>
+                                    <th class="px-6 py-4 font-semibold text-white uppercase tracking-wider">
+                                        Valid Until</th>
+                                    <th class="px-6 py-4 font-semibold text-white uppercase tracking-wider">
+                                        Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="materialTableBody" class="bg-white divide-y divide-gray-200">
+                                {% for item in student_materials %}
+                                <tr class="material-row hover:bg-gray-50 transition-colors text-center duration-150"
+                                    data-subject=" {{ item.material.subject|lower }}"
+                                    data-topic="{{ item.material.topic|default:'study material'|lower }}"
+                                    data-grade="{{ item.material.grades|lower }}"
+                                    data-status="{% if item.is_valid %}active{% else %}expired{% endif %}">
+                                    <td class="py-4 whitespace-nowrap text-sm text-gray-500">{{ forloop.counter }}</td>
+                                    <td class="py-4 text-gray-900">{{ item.material.subject }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        <div class="flex items-center justify-center">
+                                            <span
+                                                class="inline-block px-3 py-1 text-sm font-medium bg-gray-100 text-gray-800 rounded-md">
+                                                {{ item.material.topic|default:"Study Material" }}
+                                            </span>
+                                            {% if item.material.short_video_link and item.material.is_valid %}
+                                            <a href="{{ item.material.short_video_link }}" target="_blank"
+                                                class="ml-2 hover:underline inline-flex items-center text-gray-600">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                                    viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                                </svg>
+                                            </a>
+                                            {% endif %}
+
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        {% if item.material.sub_topic %}
+                                        <span
+                                            class="inline-block px-3 py-1 text-sm text-white font-medium bg-black rounded-md">
+                                            {{ item.material.sub_topic }}
+                                        </span>
+                                        {% else %}
+                                        <span class="text-gray-400">N/A</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-indigo-600">
+                                        <div class="flex items-center justify-center space-x-2">
+                                            {% if item.is_valid %}
+                                            <a href="{{ item.material.file_link }}" target="_blank"
+                                                class="hover:underline flex items-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none"
+                                                    viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                                </svg>
+                                                Open Material
+                                            </a>
+                                            {% else %}
+                                            <span class="text-sm text-gray-400 italic">Access Expired</span>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        <div class="flex items-center justify-center">
+                                            <span
+                                                class="{% if not item.is_valid %}text-red-600{% else %}text-gray-600{% endif %}">
+                                                {{ item.valid_until|date:"M d, Y" }}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-center">
+                                        {% if not item.is_valid %}
+                                        <span
+                                            class="inline-block px-2 py-1 text-xs font-medium bg-red-100 text-red-800 rounded-md">
+                                            Expired
+                                        </span>
+                                        {% else %}
+                                        <span
+                                            class="inline-block px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-md">
+                                            Active
+                                        </span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-8 text-gray-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-400 mb-4" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        </svg>
+                        <h3 class="text-lg font-medium text-gray-600 mb-2">No materials assigned yet</h3>
+                        <p class="text-gray-500">Check back later or contact your teacher for assignments.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Practice Section -->
+            <div id="section-practice" class="section hidden">
+                <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-4">
+                    <h2 class="text-2xl font-bold text-gray-800">Practice & Tests</h2>
+
+                    <!-- Toggle between Practice and Tests -->
+                    <div class="flex space-x-2">
+                        <button id="show-practice" class="px-4 py-2 rounded-lg bg-blue-600 text-white font-medium">
+                            Practice
+                        </button>
+                        <button id="show-tests"
+                            class="px-4 py-2 rounded-lg bg-gray-200 text-gray-800 font-medium hover:bg-gray-300">
+                            Tests
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Practice Table -->
+                <div id="practice-table" class="bg-white rounded-lg shadow overflow-hidden">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-blue-700">
+                            <tr>
+                                <th class="px-6 py-3 text-center font-medium text-white uppercase tracking-wider">
+                                    S.No</th>
+                                <th class="px-6 py-3 text-center font-medium text-white uppercase tracking-wider">
+                                    Name</th>
+                                <th class="px-6 py-3 text-center font-medium text-white uppercase tracking-wider">
+                                    Subject</th>
+                                <th class="px-6 py-3 text-center font-medium text-white uppercase tracking-wider">
+                                    Questions</th>
+                                <th class="px-6 py-3 text-center font-medium text-white uppercase tracking-wider">
+                                    Assigned</th>
+                                <th class="px-6 py-3 text-center font-medium text-white uppercase tracking-wider">
+                                    Status</th>
+                                <th class="px-6 py-3 text-center font-medium text-white uppercase tracking-wider">
+                                    Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for test in practice_tests %}
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-500">{{ forloop.counter }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium text-gray-900">{{test.name}}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-500">{{ test.subject }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-500">{{ test.questions_count }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-500">{{ test.assigned_date }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-center">
+                                    {% if test.completed %}
+                                    <span
+                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                        Completed ({{ test.score }}%)
+                                    </span>
+                                    {% else %}
+                                    <span
+                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                        Pending
+                                    </span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                                    {% if test.completed %}
+                                    <a href="#" onclick="showTestFeedback('{{ test.id }}')"
+                                        class="text-blue-600 hover:text-blue-900 mr-3">View Answers</a>
+                                    {% else %}
+                                    <a href="{% url 'take_test' student_id=user.id test_id=test.id %}"
+   class="inline-flex items-center px-4 py-1.5 text-sm font-medium rounded-md bg-green-100 text-green-800 hover:bg-green-200 transition">
+   Attempt
+</a>
+
+                                        
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="8" class="px-6 py-4 text-center text-sm text-gray-500">No practice
+                                    materials assigned yet</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Tests Table (initially hidden) -->
+                <div id="tests-table" class="bg-white rounded-lg shadow overflow-hidden hidden">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-purple-700">
+                            <tr>
+                                <th class="px-6 py-3 text-center font-medium text-white uppercase tracking-wider">
+                                    S.No</th>
+                                <th class="px-6 py-3 text-center font-medium text-white uppercase tracking-wider">
+                                    Name</th>
+                                <th class="px-6 py-3 text-center font-medium text-white uppercase tracking-wider">
+                                    Subject</th>
+                                <th class="px-6 py-3 text-center font-medium text-white uppercase tracking-wider">
+                                    Questions</th>
+                                <th class="px-6 py-3 text-center font-medium text-white uppercase tracking-wider">
+                                    Duration</th>
+                                <th class="px-6 py-3 text-center font-medium text-white uppercase tracking-wider">
+                                    Assigned</th>
+                                <th class="px-6 py-3 text-center font-medium text-white uppercase tracking-wider">
+                                    Status</th>
+                                <th class="px-6 py-3 text-center font-medium text-white uppercase tracking-wider">
+                                    Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for test in assigned_tests %}
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ forloop.counter }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ test.name
+                                    }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ test.subject }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ test.questions_count }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ test.duration_minutes
+                                    }} mins</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ test.assigned_date }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    {% if test.completed %}
+                                    <span
+                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                        Completed ({{ test.score }}%)
+                                    </span>
+                                    {% else %}
+                                    <span
+                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                        Pending
+                                    </span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    {% if test.completed %}
+                                    <a href="#" onclick="showTestFeedback('{{ test.id }}')"
+                                        class="text-blue-600 hover:text-blue-900 mr-3">View Results</a>
+                                    {% else %}
+                                    <a href="{% url 'take_test' student_id=user.id test_id=test.id %}"
+                                        class="text-blue-600 hover:text-blue-900 mr-3">Take Test</a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="8" class="px-6 py-4 text-center text-sm text-gray-500">No tests assigned
+                                    yet</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Feedback Modal -->
+                <div id="feedback-modal"
+                    class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+                    <div class="relative top-20 mx-auto p-5 border w-1/2 shadow-lg rounded-md bg-white">
+                        <div class="mt-3 text-center">
+                            <h3 id="modal-title" class="text-lg leading-6 font-medium text-gray-900"></h3>
+                            <div id="test-results" class="mt-2 px-7 py-3 overflow-y-auto max-h-96"></div>
+
+                            <div class="mt-4">
+                                <label for="student-feedback" class="block text-sm font-medium text-gray-700">Your
+                                    Feedback:</label>
+                                <textarea id="student-feedback" rows="3"
+                                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm"></textarea>
+                            </div>
+
+                            <div class="items-center px-4 py-3">
+                                <button id="submit-feedback"
+                                    class="px-4 py-2 bg-blue-600 text-white text-base font-medium rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    Submit Feedback
+                                </button>
+                                <button onclick="document.getElementById('feedback-modal').classList.add('hidden')"
+                                    class="ml-3 px-4 py-2 bg-gray-200 text-gray-800 text-base font-medium rounded-md shadow-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Section -->
+            <div id="section-progress" class="section hidden">
+                <h2 class="text-2xl font-bold mb-4">Progress</h2>
+                <p>Coming soon...</p>
+            </div>
+        </div>
+    </div>
+
+    {% include 'skills/footer.html' %}
+
+    <script>
+        let currentDate = new Date();
+        let selectedDate = new Date(); // Track selected date
+
+        // Get events data from Django template
+        const eventsData = {{ events_data_json| safe }};
+
+        // Create a map of events by date for quick lookup
+        const eventsByDate = {};
+        eventsData.forEach(event => {
+            if (!eventsByDate[event.event_date]) {
+                eventsByDate[event.event_date] = [];
+            }
+            eventsByDate[event.event_date].push(event);
+        });
+
+        // Add this to your existing script section
+        document.addEventListener('DOMContentLoaded', function () {
+            // Handle practice/test table toggling
+            const showPracticeBtn = document.getElementById('show-practice');
+            const showTestsBtn = document.getElementById('show-tests');
+            const practiceTable = document.getElementById('practice-table');
+            const testsTable = document.getElementById('tests-table');
+
+            if (showPracticeBtn && showTestsBtn) {
+                showPracticeBtn.addEventListener('click', function () {
+                    practiceTable.classList.remove('hidden');
+                    testsTable.classList.add('hidden');
+                    showPracticeBtn.classList.remove('bg-gray-200', 'text-gray-800');
+                    showPracticeBtn.classList.add('bg-blue-600', 'text-white');
+                    showTestsBtn.classList.remove('bg-blue-600', 'text-white');
+                    showTestsBtn.classList.add('bg-gray-200', 'text-gray-800');
+                });
+
+                showTestsBtn.addEventListener('click', function () {
+                    practiceTable.classList.add('hidden');
+                    testsTable.classList.remove('hidden');
+                    showPracticeBtn.classList.add('bg-gray-200', 'text-gray-800');
+                    showPracticeBtn.classList.remove('bg-blue-600', 'text-white');
+                    showTestsBtn.classList.remove('bg-gray-200', 'text-gray-800');
+                    showTestsBtn.classList.add('bg-blue-600', 'text-white');
+                });
+            }
+        });
+
+        function showTestFeedback(testId) {
+            const modal = document.getElementById('feedback-modal');
+            const modalTitle = document.getElementById('modal-title');
+            const testResults = document.getElementById('test-results');
+
+            // Fetch test results via AJAX
+            fetch(`/student/${userId}/test/${testId}/results/`)  // You'll need to create this endpoint
+                .then(response => response.json())
+                .then(data => {
+                    modalTitle.textContent = `Results for ${data.test_name}`;
+
+                    let resultsHtml = `
+                <div class="text-left mb-4">
+                    <p class="text-lg font-semibold">Score: ${data.score}%</p>
+                    <p class="text-sm text-gray-600">Completed on: ${data.completed_date}</p>
+                </div>
+                <div class="space-y-4">
+            `;
+
+                    data.questions.forEach((question, index) => {
+                        resultsHtml += `
+                    <div class="border-b pb-4">
+                        <p class="font-medium">Q${index + 1}: ${question.text}</p>
+                        <p class="text-sm ${question.is_correct ? 'text-green-600' : 'text-red-600'}">
+                            Your answer: ${question.selected_answer || 'Not answered'} 
+                            ${question.is_correct ? '✓' : '✗'}
+                        </p>
+                        ${!question.is_correct ? `
+                            <p class="text-sm text-gray-600">Correct answer: ${question.correct_answer}</p>
+                        ` : ''}
+                        <p class="text-xs text-gray-500">Points: ${question.points}</p>
+                    </div>
+                `;
+                    });
+
+                    resultsHtml += `</div>`;
+                    testResults.innerHTML = resultsHtml;
+
+                    modal.classList.remove('hidden');
+                })
+                .catch(error => {
+                    console.error('Error fetching test results:', error);
+                    testResults.innerHTML = '<p class="text-red-600">Error loading test results</p>';
+                    modal.classList.remove('hidden');
+                });
+
+            // Handle feedback submission
+            document.getElementById('submit-feedback').onclick = function () {
+                const feedback = document.getElementById('student-feedback').value;
+                if (feedback.trim()) {
+                    fetch(`/student/${userId}/test/${testId}/feedback/`, {  // You'll need to create this endpoint
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrfToken
+                        },
+                        body: JSON.stringify({ feedback: feedback })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                alert('Feedback submitted successfully!');
+                                modal.classList.add('hidden');
+                            } else {
+                                alert('Error submitting feedback: ' + data.message);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error submitting feedback:', error);
+                            alert('Error submitting feedback');
+                        });
+                } else {
+                    alert('Please enter your feedback before submitting');
+                }
+            };
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const topicFilter = document.getElementById('topicFilter');
+            const searchInput = document.getElementById('materialSearch');
+            const materialRows = document.querySelectorAll('.material-row');
+
+            function filterMaterials() {
+                const selectedTopic = topicFilter.value.toLowerCase();
+                const searchTerm = searchInput.value.toLowerCase();
+
+                materialRows.forEach(row => {
+                    const topic = row.getAttribute('data-topic');
+                    const subject = row.getAttribute('data-subject');
+                    const grade = row.getAttribute('data-grade');
+                    const status = row.getAttribute('data-status');
+
+                    const matchesTopic = selectedTopic === '' || topic.includes(selectedTopic);
+                    const matchesSearch = searchTerm === '' ||
+                        subject.includes(searchTerm) ||
+                        topic.includes(searchTerm) ||
+                        grade.includes(searchTerm) ||
+                        status.includes(searchTerm);
+
+                    if (matchesTopic && matchesSearch) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            }
+
+            if (topicFilter) topicFilter.addEventListener('change', filterMaterials);
+            if (searchInput) searchInput.addEventListener('input', filterMaterials);
+        });
+
+        function showSection(section) {
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(sec => sec.classList.add('hidden'));
+
+            document.getElementById(`section-${section}`).classList.remove('hidden');
+
+            const tabs = ['event', 'learn', 'practice', 'progress'];
+            tabs.forEach(tab => {
+                document.getElementById(`tab-${tab}`).classList.remove('bg-gray-200');
+            });
+            document.getElementById(`tab-${section}`).classList.add('bg-gray-200');
+        }
+
+        function changeMonth(direction) {
+            currentDate.setMonth(currentDate.getMonth() + direction);
+            renderCalendar();
+        }
+
+        function getEventTypeColor(eventType) {
+            const colors = {
+                'Study Session': 'bg-blue-500',
+                'Test/Practice': 'bg-red-500',
+            };
+            return colors[eventType] || 'bg-gray-500';
+        }
+
+        function onDateClick(date) {
+            selectedDate = new Date(date);
+            renderEventList(formatDateForAPI(selectedDate));
+            updateSelectedDateDisplay();
+
+            // Update visual selection in calendar
+            const allDayElements = document.querySelectorAll('.calendar-day');
+            allDayElements.forEach(el => {
+                el.classList.remove('ring-2', 'ring-blue-500', 'ring-offset-1');
+            });
+
+            // Add selection ring to clicked date
+            const clickedElement = document.querySelector(`[data-date="${formatDateForAPI(selectedDate)}"]`);
+            if (clickedElement) {
+                clickedElement.classList.add('ring-2', 'ring-blue-500', 'ring-offset-1');
+            }
+        }
+
+        function formatDateForAPI(date) {
+            return date.getFullYear() + '-' +
+                String(date.getMonth() + 1).padStart(2, '0') + '-' +
+                String(date.getDate()).padStart(2, '0');
+        }
+
+        function formatDateForDisplay(date) {
+            const options = {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            };
+            return date.toLocaleDateString('en-US', options);
+        }
+
+        function updateSelectedDateDisplay() {
+            const displayElement = document.getElementById('selected-date-display');
+            if (displayElement) {
+                displayElement.textContent = formatDateForDisplay(selectedDate);
+            }
+        }
+
+        function renderEventList(dateString) {
+            const eventList = document.getElementById('event-list');
+            const eventsForDate = eventsByDate[dateString] || [];
+
+            function format24To12(timeStr) {
+                const [hourStr, minuteStr] = timeStr.split(":");
+                let hour = parseInt(hourStr);
+                const minute = minuteStr.padStart(2, '0');
+                const ampm = hour >= 12 ? "PM" : "AM";
+                hour = hour % 12 || 12;
+                return `${hour}:${minute} ${ampm}`;
+            }
+
+
+            if (eventsForDate.length === 0) {
+                eventList.innerHTML = `
+                    <div class="text-center py-8">
+                        <svg class="w-12 h-12 mx-auto text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                            </path>
+                        </svg>
+                        <p class="text-gray-500 text-sm">No events for this date</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let eventListHTML = '';
+            eventsForDate.forEach(event => {
+                const eventTypeColors = {
+                    'Study Session': 'bg-blue-100 text-blue-800',
+                    'Test/Practice': 'bg-red-100 text-red-800',
+                };
+
+                const colorClass = eventTypeColors[event.event_type] || 'bg-gray-100 text-gray-800';
+
+                eventListHTML += `
+                    <div class="bg-white rounded-lg p-4 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h4 class="font-semibold text-gray-900 text-sm">${event.title}</h4>
+                                <div class="mt-1 space-y-1">
+                                    <div class="flex items-center text-xs text-gray-600">
+                                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        ${format24To12(event.start_time)} - ${format24To12(event.end_time)}
+                                    </div>
+                                    ${event.description ? `<p class="text-xs text-gray-500 mt-1">${event.description}</p>` : ''}
+                                </div>
+                            </div>
+                            <div class="ml-2 flex flex-col items-end">
+                                <span class="inline-flex items-center px-2 py-1 text-xs font-medium rounded-full ${colorClass}">
+                                    ${event.event_type}
+                                </span>
+                                ${event.class_link && event.event_type !== "Test/Practice" ? `
+                                    <a href="${event.class_link}" target="_blank" rel="noopener noreferrer"
+                                        class="inline-flex items-center px-2 py-1 rounded-full text-sm font-medium mt-2 bg-green-100 text-green-800 hover:bg-green-200 transition">
+                                        <svg class="w-4 h-4 text-green-800 mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                                            <path fill-rule="evenodd" d="M14 7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7Zm2 9.387 4.684 1.562A1 1 0 0 0 22 17V7a1 1 0 0 0-1.316-.949L16 7.613v8.774Z" clip-rule="evenodd" />
+                                        </svg>
+                                        Join Class
+                                    </a>
+                                ` : ''}
+                                ${event.is_completed ? '<span class="text-xs text-green-600 mt-1">✓ Completed</span>' : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            eventList.innerHTML = eventListHTML;
+        }
+
+        function renderCalendar() {
+            const monthNames = ["January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"];
+
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+
+            document.getElementById('calendar-month-year').textContent = `${monthNames[month]} ${year}`;
+
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const today = new Date();
+
+            // Get first Monday of calendar (might be from previous month)
+            const startDate = new Date(firstDay);
+            const dayOfWeek = firstDay.getDay();
+            const daysToSubtract = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+            startDate.setDate(firstDay.getDate() - daysToSubtract);
+
+            const calendarGrid = document.getElementById('calendar-grid');
+            calendarGrid.innerHTML = '';
+
+            // Generate 42 days (6 weeks)
+            for (let i = 0; i < 42; i++) {
+                const currentDay = new Date(startDate);
+                currentDay.setDate(startDate.getDate() + i);
+                const dateString = formatDateForAPI(currentDay);
+
+                const dayElement = document.createElement('div');
+                dayElement.className = 'relative p-3 h-20 border border-blue-100 cursor-pointer hover:bg-blue-50 calendar-day';
+                dayElement.setAttribute('data-date', dateString);
+                dayElement.onclick = () => onDateClick(currentDay);
+
+                const dayNumber = document.createElement('div');
+                dayNumber.textContent = currentDay.getDate();
+
+                // Style different types of days
+                if (currentDay.getMonth() !== month) {
+                    // Previous/next month days
+                    dayElement.className += ' bg-blue-100 text-blue-400';
+                } else if (currentDay.toDateString() === today.toDateString()) {
+                    // Today
+                    dayElement.className += ' bg-blue-800 text-white hover:bg-blue-500';
+                    dayNumber.className = 'font-bold';
+                } else {
+                    // Current month days
+                    dayElement.className += ' bg-white text-blue-700';
+                }
+
+                // Add selection ring if this is the selected date
+                if (currentDay.toDateString() === selectedDate.toDateString()) {
+                    dayElement.classList.add('ring-2', 'ring-blue-500', 'ring-offset-1');
+                }
+
+                dayElement.appendChild(dayNumber);
+
+                // Add event indicators
+                const eventsForDay = eventsByDate[dateString] || [];
+                if (eventsForDay.length > 0) {
+                    const eventIndicator = document.createElement('div');
+                    eventIndicator.className = 'absolute bottom-1 right-1 w-2 h-2 bg-red-500 rounded-full';
+
+                    // Show up to 3 event dots
+                    const eventsToShow = eventsForDay.slice(0, 3);
+                    eventsToShow.forEach(event => {
+                        const dot = document.createElement('div');
+                        dot.className = `w-2 h-2 rounded-full`;
+                        eventIndicator.appendChild(dot);
+                    });
+
+                    // Show count if more than 3 events
+                    if (eventsForDay.length > 3) {
+                        const countIndicator = document.createElement('div');
+                        countIndicator.className = 'text-xs font-bold text-gray-600';
+                        countIndicator.textContent = `+${eventsForDay.length - 3}`;
+                        eventIndicator.appendChild(countIndicator);
+                    }
+
+                    dayElement.appendChild(eventIndicator);
+                }
+
+                calendarGrid.appendChild(dayElement);
+            }
+        }
+
+        window.onload = () => {
+            showSection('event');
+            renderCalendar();
+            // Set today as default selected date and show its events
+            selectedDate = new Date();
+            renderEventList(formatDateForAPI(selectedDate));
+            updateSelectedDateDisplay();
+        };
+    </script>
+</body>
+
+</html>

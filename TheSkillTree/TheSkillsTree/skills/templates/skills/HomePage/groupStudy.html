@@ -1,0 +1,62 @@
+{% load static tailwind_tags %}
+{% load bootstrap_icons %}
+
+<section class="py-12 sm:py-16 bg-blue-50">
+    <div class="container mx-auto flex flex-col lg:flex-row items-center px-4 sm:px-6">
+
+        <!-- Image Section -->
+        <div class="lg:w-1/2 flex justify-center mb-6 lg:mb-0">
+            <img src="{% static 'img/Study.webp' %}" alt="Group Study"
+                class="w-[80%] sm:w-[70%] md:w-[65%] lg:w-[75%] object-cover mr-auto">
+        </div>
+
+        <!-- Content Section -->
+        <div class="lg:w-1/2 text-center lg:text-left">
+            <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold leading-snug text-gray-800" style="line-height: 1.2;">
+                Unleash Your <br class="hidden sm:block"> Creativity and Showcase Your <span
+                    class="text-blue-600">Talents!</span>
+            </h1>
+            <p class="text-gray-600 mt-4 text-sm sm:text-base md:text-lg">
+                Every month, we host an exciting Show & Tell event where students from all programs can participate.
+                Share your stories, projects, or skills, and stand a chance to win amazing rewards like Amazon vouchers
+                or extra class credits!
+            </p>
+
+            <!-- Features Section -->
+            <div class="grid grid-cols-2 gap-4 mt-6">
+                <div class="flex flex-col items-center sm:flex-row sm:items-start gap-2 sm:gap-4">
+                    {% bs_icon 'send' size='24px' extra_classes="text-primary" %}
+                    <span class="text-center sm:text-left text-sm sm:text-lg font-medium text-text">
+                        Boost Confidence
+                    </span>
+                </div>
+                <div class="flex flex-col items-center sm:flex-row sm:items-start gap-2 sm:gap-3">
+                    {% bs_icon 'person-circle' size='24px' extra_classes="text-primary" %}
+                    <span class="text-center sm:text-left text-sm sm:text-lg font-medium text-text">
+                        Expert Hosts
+                    </span>
+                </div>
+                <div class="flex flex-col items-center sm:flex-row sm:items-start gap-2 sm:gap-3">
+                    {% bs_icon 'file-earmark-text' size='24px' extra_classes="text-primary" %}
+                    <span class="text-center sm:text-left text-sm sm:text-lg font-medium text-text">
+                        Get Certificate
+                    </span>
+                </div>
+                <div class="flex flex-col items-center sm:flex-row sm:items-start gap-2 sm:gap-3">
+                    {% bs_icon 'calendar-event' size='24px' extra_classes="text-primary" %}
+                    <span class="text-center sm:text-left text-sm sm:text-lg font-medium text-text">
+                        Lifetime Access
+                    </span>
+                </div>
+            </div>
+
+            <!-- Button Section -->
+            <div class="mt-6 flex flex-col sm:flex-row gap-3 items-center justify-center lg:justify-start">
+                <button class="bg-blue-600 text-white px-5 py-2 sm:px-6 sm:py-3 rounded-full 
+                               hover:bg-blue-700 transition duration-300">
+                    Register Yourself
+                </button>
+            </div>
+        </div>
+    </div>
+</section>

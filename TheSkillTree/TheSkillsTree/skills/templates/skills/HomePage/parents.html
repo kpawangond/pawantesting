@@ -1,0 +1,68 @@
+{% load static tailwind_tags bootstrap_icons %}
+
+<section class="bg-blue-50">
+    <div class="pt-16 pb-28 px-6 flex flex-col lg:flex-row items-center gap-16 lg:gap-24 max-w-7xl mx-auto">
+        <!-- Left Section - Image with Badges -->
+        <div class="lg:w-1/2 relative flex justify-center">
+            <!-- Main Image -->
+            <img src="{% static 'img/Parents.webp' %}" alt="Happy Family" class="h-72 sm:h-80">
+
+            <!-- Badges -->
+            <div class="absolute top-2 left-0 sm:top-4 bg-white shadow-md p-2 sm:p-3 rounded-lg text-center">
+                <p class="text-red-500 font-bold text-lg sm:text-xl">12K+</p>
+                <p class="text-gray-600 text-xs sm:text-sm">Happy Parents</p>
+            </div>
+            <div class="absolute bottom-2 right-0 sm:bottom-4 bg-white shadow-md p-2 sm:p-3 rounded-lg text-center">
+                <p class="text-green-600 font-bold text-lg sm:text-xl">2+</p>
+                <p class="text-gray-600 text-xs sm:text-sm">Years Of Experience</p>
+            </div>
+            <div
+                class="absolute bottom-[-10px] sm:bottom-[-20px] left-1/2 transform -translate-x-1/2 bg-white shadow-md p-2 sm:p-3 rounded-lg text-center">
+                <p class="text-blue-600 font-bold text-lg sm:text-xl">13K+ Students Taught</p>
+            </div>
+        </div>
+
+        <!-- Right Section - Content -->
+        <div class="lg:w-1/2 text-center lg:text-left">
+            <p class="bg-red-100 text-red-600 px-3 py-1 rounded-full inline-block font-medium text-sm sm:text-base">
+                Why Choose Us?
+            </p>
+            <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mt-4">
+                Caring for Both Students and Parents
+            </h1>
+            <p class="text-gray-500 mt-4 text-sm sm:text-base">
+                We are dedicated to your child's growth and success, while providing
+                the support and flexibility parents need.
+            </p>
+
+            <!-- Checkpoints -->
+            <ul class="mt-6 space-y-4 text-center lg:text-left">
+                <li
+                    class="flex flex-col sm:flex-row items-center sm:items-start lg:items-center gap-3 text-gray-700 text-sm sm:text-base">
+                    {% bs_icon 'check-circle' size='24px' extra_classes="text-green-500" %}
+                    <span>Convenient Bi-Monthly Payments</span>
+                </li>
+                <li
+                    class="flex flex-col sm:flex-row items-center sm:items-start lg:items-center gap-3 text-gray-700 text-sm sm:text-base">
+                    {% bs_icon 'check-circle' size='24px' extra_classes="text-green-500" %}
+                    <span>Missed Classes? No Charges!</span>
+                </li>
+                <li
+                    class="flex flex-col sm:flex-row items-center sm:items-start lg:items-center gap-3 text-gray-700 text-sm sm:text-base">
+                    {% bs_icon 'check-circle' size='24px' extra_classes="text-green-500" %}
+                    <span>Catch-Up Classes for Learning Gaps</span>
+                </li>
+                <li
+                    class="flex flex-col sm:flex-row items-center sm:items-start lg:items-center gap-3 text-gray-700 text-sm sm:text-base">
+                    {% bs_icon 'check-circle' size='24px' extra_classes="text-green-500" %}
+                    <span>Regular Parent-Teacher Meetings</span>
+                </li>
+            </ul>
+
+            <button
+                class="bg-blue-600 text-white px-5 py-2 sm:px-6 sm:py-3 rounded-full hover:bg-blue-700 transition duration-300 mt-6">
+                Book a demo
+            </button>
+        </div>
+    </div>
+</section>

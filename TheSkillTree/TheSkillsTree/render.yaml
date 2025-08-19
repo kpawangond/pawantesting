@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: the-skills-tree
+    env: python
+    buildCommand: |
+      pip install -r requirements.txt
+      npm install
+      python manage.py tailwind build
+      python manage.py collectstatic --noinput
+    startCommand: gunicorn TheSkillsTree.wsgi:application
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10

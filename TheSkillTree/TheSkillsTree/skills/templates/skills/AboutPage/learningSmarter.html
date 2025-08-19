@@ -1,0 +1,100 @@
+{% load static tailwind_tags %}
+
+<style>
+    @keyframes fadeInUpRight {
+        0% {
+            opacity: 0;
+            transform: translateY(50px) translateX(-50px);
+        }
+
+        100% {
+            opacity: 1;
+            transform: translateY(0) translateX(0);
+        }
+    }
+
+    .fade-in-up6 {
+        opacity: 0;
+        transform: translateY(50px) translateX(-50px);
+        transition: all 0.8s ease-out;
+    }
+
+    .fade-in-up6.visible {
+        animation: fadeInUpRight 0.8s ease-out forwards;
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const animated = document.querySelector(".fade-in-up6");
+
+        const observer = new IntersectionObserver(
+            entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("visible");
+                        observer.unobserve(entry.target);
+                    }
+                });
+            },
+            {
+                threshold: 0.3,
+            }
+        );
+
+        if (animated) {
+            observer.observe(animated);
+        }
+    });
+</script>
+
+<section class="py-16 sm:py-20">
+    <div class="container mx-auto flex flex-col lg:flex-row items-center px-6 text-gray-800">
+        <!-- Image with scroll-triggered animation -->
+        <div class="lg:w-1/2 mt-12 lg:mt-0 relative flex justify-center">
+            <img src="{% static 'img/CoursesPage/math/one2one.webp' %}" alt="About Rector"
+                class="fade-in-up6 w-[60%] sm:w-[70%] md:w-[80%] lg:w-[75%] object-cover mr-auto" />
+        </div>
+
+        <!-- Content -->
+        <div class="lg:w-1/2 text-center lg:text-left mt-12 lg:mt-0">
+            
+            <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold sm:mt-4" style="line-height: 1.2;">
+                How We Make <span class="text-blue-600"> Learning Smarter</span>
+            </h1>
+
+            
+
+            
+
+            <!-- Key Features -->
+            <ul class="mt-6 text-left space-y-4 text-gray-700 text-base sm:text-lg md:text-xl">
+                <li class="flex items-start">
+                    <span class="mr-3 text-xl">✔</span>
+                    <span class="text-gray-600 font-semibold">GeoGebra-Powered Math Lessons – Interactive tools to visualize and master complex concepts.</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="mr-3 text-xl">✔</span>
+                    <span class="text-gray-600 font-semibold">AI-Driven Assessments – Instant feedback and progress tracking.</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="mr-3 text-xl">✔</span>
+                    <span class="text-gray-600 font-semibold">Live & Interactive Classes – Engaging sessions with real-time problem-solving.</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="mr-3 text-xl">✔</span>
+                    <span class="text-gray-600 font-semibold">Adaptive Curriculum – Focus on strengths and improve weaknesses with targeted modules.</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="mr-3 text-xl">✔</span>
+                    <span class="text-gray-600 font-semibold">Exclusive Student Dashboard – Unlimited access to practice materials & assessments.</span>
+                </li>
+
+                
+            </ul>
+
+          
+        </div>
+        
+    </div>
+</section>

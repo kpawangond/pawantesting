@@ -1,0 +1,325 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if test.is_practice %}Practice{% else %}Test{% endif %}: {{ test.name }}</title>
+    <style>
+        .question-box {
+            display: none;
+        }
+        .question-box.active {
+            display: block;
+        }
+        #timer {
+            font-family: monospace;
+        }
+    </style>
+    {% tailwind_css %}
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <!-- Header Section -->
+            <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6 border-b pb-4">
+
+    <!-- Left: Test Title and Meta -->
+    <div>
+        <h1 class="flex items-center text-3xl font-semibold text-gray-900 tracking-tight">
+            {% if test.is_practice %}
+                <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-medium uppercase mr-3">
+                    Practice
+                </span>
+            {% else %}
+                <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-medium uppercase mr-3">
+                    Test
+                </span>
+            {% endif %}
+            {{ test.name }}
+        </h1>
+
+        <p class="text-sm text-gray-500 mt-1">
+            {{ test.subject }} &bull; {{ test.questions.count }} Question{{ test.questions.count|pluralize }}
+        </p>
+    </div>
+
+    <!-- Right: Timer (if test only) -->
+    {% if not test.is_practice %}
+    <div id="timer-container" class="bg-gray-900 text-white px-5 py-2 rounded-full shadow hidden">
+        <div class="flex items-center space-x-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                    clip-rule="evenodd" />
+            </svg>
+            <span id="timer" class="font-mono text-lg tracking-widest">
+                {{ test.duration_minutes|stringformat:"02d" }}:00
+            </span>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+
+
+            <!-- Instructions Section -->
+            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-yellow-800">
+                            {% if test.is_practice %}
+                            Practice Instructions
+                            {% else %}
+                            Test Instructions
+                            {% endif %}
+                        </h3>
+                        <div class="mt-2 text-sm text-yellow-700">
+                            <ul class="list-disc pl-5 space-y-1">
+                                {% if not test.is_practice %}
+                                <li>You have <strong>{{ test.duration_minutes }} minutes</strong> to complete this test</li>
+                                <li>The timer will start when you click "Start Test"</li>
+                                <li>Once started, you cannot pause the test</li>
+                                {% else %}
+                                <li>This is a practice session with no time limit</li>
+                                <li>You can review your answers before submitting</li>
+                                {% endif %}
+                                <li>Answer all questions to the best of your ability</li>
+                                <li>Do not refresh the page or you may lose your progress</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Start Button (shown initially) -->
+            <div id="start-section" class="text-center py-8">
+                <h2 class="text-xl font-semibold mb-4">
+                    {% if test.is_practice %}
+                    Ready to begin your practice session?
+                    {% else %}
+                    Ready to begin your test?
+                    {% endif %}
+                </h2>
+                <button id="start-btn" class="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg shadow-md hover:bg-blue-700 transition duration-300">
+                    {% if test.is_practice %}
+                    Start Practice
+                    {% else %}
+                    Start Test
+                    {% endif %}
+                </button>
+            </div>
+
+            <!-- Test Form (hidden initially) -->
+            <form id="test-form" class="hidden" method="post" action="{% url 'submit_test' student_id=student.id test_id=test.id %}">
+                {% csrf_token %}
+                
+                <!-- Questions Container -->
+                <div id="questions-container">
+                    {% for question in questions %}
+                    <div class="question-box mb-8 p-6 bg-white border border-gray-200 rounded-lg" data-question-id="{{ question.id }}">
+                        <div class="flex items-start mb-4">
+                            <span class="flex-shrink-0 bg-gray-800 text-white rounded-full w-8 h-8 flex items-center justify-center mr-3">
+                                {{ forloop.counter }}
+                            </span>
+                            <div class="flex-1">
+                                <div class="question-text mb-4">
+                                    {{ question.text|safe }}
+                                </div>
+                                {% if question.image_url %}
+                                <div class="mb-4">
+                                    <img src="{{ question.image_url }}" alt="Question image" class="max-w-full h-auto rounded border border-gray-300">
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Options -->
+                        <div class="space-y-3 ml-11">
+                            {% for option in question.options %}
+                            <div class="flex items-center">
+                                <input type="radio" name="question_{{ question.id }}" id="option_{{ option.id }}" 
+                                       value="{{ option.id }}" class="h-4 w-4 text-blue-600 focus:ring-blue-500">
+                                <label for="option_{{ option.id }}" class="ml-3 block">
+                                    <span class="option-text">{{ option.text|safe }}</span>
+                                    {% if option.image_url %}
+                                    <div class="mt-2">
+                                        <img src="{{ option.image_url }}" alt="Option image" class="max-w-xs h-auto rounded border border-gray-300">
+                                    </div>
+                                    {% endif %}
+                                </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Feedback for practice -->
+                        {% if test.is_practice %}
+                        <div class="mt-6 ml-11">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Your feedback on this question (optional):</label>
+                            <textarea name="feedback_{{ question.id }}" class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 question-feedback" rows="3" placeholder="Was this question clear? Any difficulties?"></textarea>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Navigation Buttons -->
+                <div class="flex justify-between mt-8 mb-4">
+                    <button type="button" id="prev-btn" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 hidden">
+                        Previous
+                    </button>
+                    <button type="button" id="next-btn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 ml-auto">
+                        Next
+                    </button>
+                </div>
+
+                <!-- General Feedback & Submit -->
+                <div class="mt-12 pt-6 border-t border-gray-200">
+                    {% if test.is_practice %}
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Overall practice feedback (optional):</label>
+                        <textarea name="general_feedback" class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" rows="4" placeholder="How was this practice overall? Any suggestions for improvement?"></textarea>
+                    </div>
+                    {% endif %}
+
+                    <div class="flex justify-end">
+                        <button type="submit" id="submit-btn" class="px-6 py-3 bg-green-600 text-white font-medium rounded-lg shadow-md hover:bg-green-700 transition duration-300">
+                            {% if test.is_practice %}
+                            Submit Practice
+                            {% else %}
+                            Submit Test
+                            {% endif %}
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const testForm = document.getElementById('test-form');
+            const startSection = document.getElementById('start-section');
+            const startBtn = document.getElementById('start-btn');
+            const questions = document.querySelectorAll('.question-box');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const submitBtn = document.getElementById('submit-btn');
+            const timerContainer = document.getElementById('timer-container');
+            const timerElement = document.getElementById('timer');
+            
+            let currentQuestion = 0;
+            let timerInterval;
+            let timeLeft = {{ test.duration_minutes }} * 60; // Convert to seconds
+            const isPractice = {% if test.is_practice %}true{% else %}false{% endif %};
+
+            // Start the test/practice
+            startBtn.addEventListener('click', function() {
+                startSection.classList.add('hidden');
+                testForm.classList.remove('hidden');
+                questions[0].classList.add('active');
+                
+                if (!isPractice) {
+                    // Start the timer for tests
+                    timerContainer.classList.remove('hidden');
+                    startTimer();
+                }
+            });
+
+            // Timer function for tests
+            function startTimer() {
+                updateTimerDisplay();
+                
+                timerInterval = setInterval(function() {
+                    timeLeft--;
+                    updateTimerDisplay();
+                    
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        alert('Time is up! Your test will be automatically submitted.');
+                        document.getElementById('test-form').submit();
+                    }
+                }, 1000);
+            }
+
+            function updateTimerDisplay() {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                // Change color when time is running low
+                if (timeLeft <= 300) { // 5 minutes or less
+                    timerElement.classList.add('text-red-400');
+                }
+            }
+
+            // Navigation between questions
+            function showQuestion(index) {
+                questions.forEach((q, i) => {
+                    q.classList.toggle('active', i === index);
+                });
+                
+                // Update navigation buttons
+                prevBtn.classList.toggle('hidden', index === 0);
+                nextBtn.classList.toggle('hidden', index === questions.length - 1);
+                submitBtn.classList.toggle('hidden', index !== questions.length - 1);
+            }
+
+            nextBtn.addEventListener('click', function() {
+                if (currentQuestion < questions.length - 1) {
+                    currentQuestion++;
+                    showQuestion(currentQuestion);
+                }
+            });
+
+            prevBtn.addEventListener('click', function() {
+                if (currentQuestion > 0) {
+                    currentQuestion--;
+                    showQuestion(currentQuestion);
+                }
+            });
+
+            // Form submission handling
+            testForm.addEventListener('submit', function(e) {
+                if (!isPractice) {
+                    const unanswered = [];
+                    questions.forEach((q, i) => {
+                        const questionId = q.dataset.questionId;
+                        const selectedOption = document.querySelector(`input[name="question_${questionId}"]:checked`);
+                        if (!selectedOption) {
+                            unanswered.push(i + 1);
+                        }
+                    });
+                    
+                    if (unanswered.length > 0) {
+                        e.preventDefault();
+                        const confirmSubmit = confirm(`You haven't answered questions: ${unanswered.join(', ')}. Are you sure you want to submit?`);
+                        if (confirmSubmit) {
+                            if (timerInterval) clearInterval(timerInterval);
+                            testForm.submit();
+                        }
+                    } else {
+                        if (timerInterval) clearInterval(timerInterval);
+                    }
+                }
+            });
+
+            // Keyboard navigation
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'ArrowRight' && currentQuestion < questions.length - 1) {
+                    currentQuestion++;
+                    showQuestion(currentQuestion);
+                } else if (e.key === 'ArrowLeft' && currentQuestion > 0) {
+                    currentQuestion--;
+                    showQuestion(currentQuestion);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

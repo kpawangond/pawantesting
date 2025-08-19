@@ -1,0 +1,1298 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Student Details</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% tailwind_css %}
+    <script src="https://cdn.ckeditor.com/ckeditor5/35.4.0/classic/ckeditor.js"></script>
+</head>
+
+<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
+
+    {% include 'skills/navbar.html' %}
+
+    <div class="container mx-auto px-4 py-8 flex-grow">
+        <div class="bg-white shadow rounded-lg overflow-hidden">
+            <!-- Header with student info -->
+            <div class="border-b p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-bold">Student Details</h2>
+                    <a href="{% url 'admin_dashboard' %}"
+                        class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded transition">
+                        Back to Dashboard
+                    </a>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div>
+                            <p class="text-sm text-gray-500">Parent Name</p>
+                            <p class="font-medium">{{ student.parent_name }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Student Name</p>
+                            <p class="font-medium">{{ student.student_name }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Email</p>
+                            <p class="font-medium">{{ student.email }}</p>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div>
+                            <p class="text-sm text-gray-500">Grade</p>
+                            <p class="font-medium">{{ student.grade }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Account Created</p>
+                            <p class="font-medium">{{ student.created_at|date:"F j, Y" }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hidden input for student ID -->
+                <input type="hidden" id="student-id" value="{{ student.id }}">
+            </div>
+
+            <!-- Tabs for different sections -->
+            <div class="border-b">
+                <nav class="flex">
+                    <button onclick="showTab('event')" id="tab-event"
+                        class="tab-button px-6 py-3 font-medium border-b-2 border-blue-500 text-gray-900">
+                        Events
+                    </button>
+                    <button onclick="showTab('assigned')" id="tab-assigned"
+                        class="tab-button px-6 py-3 font-medium border-b-2 border-blue-500 text-gray-900">
+                        Assigned Study Materials
+                    </button>
+                    <button onclick="showTab('assign')" id="tab-assign"
+                        class="tab-button px-6 py-3 font-medium text-gray-500 hover:text-gray-700">
+                        Assign New Materials
+                    </button>
+                    <button onclick="showTab('practice')" id="tab-practice"
+                        class="tab-button px-6 py-3 font-medium text-gray-500 hover:text-gray-700">
+                        Practice Tests
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Loading indicator -->
+            <div id="loading-indicator" class="hidden p-6 text-center">
+                <div class="inline-block animate-spin rounded-md h-8 w-8 border-b-2 border-blue-500"></div>
+                <p class="mt-2 text-gray-600">Loading materials...</p>
+            </div>
+
+            <div id="tab-content-practice" class="tab-content p-6 hidden">
+
+                <div id="tests-container" class="space-y-4">
+                    <!-- Tests will be loaded here via AJAX -->
+                </div>
+            </div>
+
+            <!-- Assigned Materials Section -->
+            <div id="tab-content-assigned" class="tab-content p-6">
+                <h3 class="text-xl font-semibold mb-4">Currently Assigned Materials</h3>
+
+                <div id="assigned-materials-container">
+                    {% if assigned_materials %}
+                    <div class="space-y-6">
+                        {% regroup assigned_materials by subject as subject_list %}
+
+                        {% for subject in subject_list %}
+                        <div>
+                            <h4 class="text-lg font-medium mb-2">{{ subject.grouper }}</h4>
+                            <div class="bg-blue-600 rounded-lg p-4">
+                                <table class="min-w-full">
+                                    <thead>
+                                        <tr class="text-left text-gray-500 text-sm">
+                                            <th class="pb-2">Material</th>
+                                            <th class="pb-2">Valid Until</th>
+                                            <th class="pb-2">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200">
+                                        {% for material in subject.list %}
+                                        <tr>
+                                            <td class="py-3">
+                                                <a href="{{ material.file_link }}" target="_blank"
+                                                    class="text-blue-500 hover:underline">
+                                                    View Material
+                                                </a>
+                                            </td>
+                                            <td class="py-3">
+                                                {{ material.valid_until|date:"M d, Y" }}
+                                                {% if material.is_expired %}
+                                                <span
+                                                    class="ml-2 px-2 py-1 text-xs bg-red-100 text-red-800 rounded">Expired</span>
+                                                {% endif %}
+                                            </td>
+                                            <td class="py-3">
+                                                <form method="POST"
+                                                    action="{% url 'remove_student_material' student.id material.assignment_id %}"
+                                                    class="inline">
+                                                    {% csrf_token %}
+                                                    <button type="submit"
+                                                        onclick="return confirm('Are you sure you want to remove this material?')"
+                                                        class="text-red-500 hover:text-red-700">
+                                                        Remove
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-8 text-gray-500">
+                        No materials have been assigned to this student yet.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Assign New Materials Section -->
+            <div id="tab-content-assign" class="tab-content p-6 hidden">
+                <h3 class="text-xl font-semibold mb-4">Assign Study Material</h3>
+
+                <div id="available-materials-container">
+                    <div class="bg-white shadow rounded-lg overflow-hidden">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        S.No</th>
+                                    <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Subject</th>
+                                    <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Topics</th>
+                                    <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Sub Topics</th>
+                                    <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Grades</th>
+                                    <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        File Link</th>
+                                    <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Valid Until</th>
+                                    <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="materialTableBody" class="bg-white divide-y divide-gray-200">
+                                {% for material in available_materials %}
+                                <tr class="hover:bg-gray-50 transition-colors duration-150 text-center material-row"
+                                    data-subject="{{ material.subject|lower }}"
+                                    data-grades="{{ material.grades|lower }}" data-topic="{{ material.topic|lower }}"
+                                    data-subtopic="{{ material.sub_topic|lower }}"
+                                    data-date="{{ material.created_at|date:'M d, Y' }}">
+                                    <td class="py-4 whitespace-nowrap text-sm text-gray-500">{{ forloop.counter }}</td>
+                                    <td class="py-4 text-gray-900">{{ material.subject }}</td>
+                                    <td class="py-4 text-gray-900">
+                                        <span
+                                            class="inline-block px-3 py-1 text-sm font-medium bg-blue-100 text-blue-800 rounded-md">
+                                            {{ material.topic }}
+                                        </span>
+                                        {% if material.short_video_link %}
+                                        <a href="{{ material.short_video_link }}" target="_blank"
+                                            class="ml-2 hover:underline inline-flex items-center text-red-600">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                                viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                            </svg>
+                                        </a>
+                                        {% endif %}
+                                    </td>
+                                    <td class="py-4 text-gray-900">
+                                        <span
+                                            class="inline-block px-3 py-1 text-sm font-medium bg-blue-100 text-blue-800 rounded-md">
+                                            {{ material.sub_topic }}
+                                        </span>
+                                    </td>
+                                    <td class="py-4 text-gray-900">
+                                        <span
+                                            class="inline-block px-3 py-1 text-sm font-medium bg-green-100 text-green-800 rounded-md">
+                                            Grade {{ material.grades }}
+                                        </span>
+                                    </td>
+                                    <td
+                                        class="py-4 whitespace-nowrap text-sm text-indigo-600 text-center flex justify-center items-center space-x-2">
+                                        <a href="{{ material.file_link }}" target="_blank"
+                                            class="hover:underline flex items-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none"
+                                                viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                            </svg>
+                                            View File
+                                        </a>
+                                    </td>
+                                    <td class="py-4 whitespace-nowrap">
+                                        <form method="POST"
+                                            action="{% url 'assign_student_material' student.id material.id %}"
+                                            class="inline-block">
+                                            {% csrf_token %}
+                                            <input type="date" name="valid_until" required
+                                                class="border border-gray-300 rounded px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                min="{{ today_date|date:'Y-m-d' }}">
+                                    </td>
+                                    <td class="py-4 whitespace-nowrap text-sm text-center">
+                                        <button type="submit"
+                                            class="bg-blue-500 hover:bg-blue-600 text-white text-sm px-4 py-2 rounded transition duration-150 inline-flex items-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none"
+                                                viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                            </svg>
+                                            Assign
+                                        </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr id="noResultsRow">
+                                    <td colspan="7" class="text-center p-4 text-gray-500">
+                                        No materials available for this student's grade.
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Event Tab Content -->
+            <div id="tab-content-event" class="tab-content hidden m-10">
+                <div class="flex gap-8">
+                    <!-- Calendar -->
+                    <div class="flex-1 bg-white rounded-lg p-6" style="box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;">
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="flex items-center gap-4">
+                                <h3 class="text-xl font-semibold" id="calendar-month-year"></h3>
+                                <div class="flex gap-2">
+                                    <button onclick="changeMonth(-1)"
+                                        class="p-2 rounded-lg bg-yellow-300 text-black hover:bg-yellow-400">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M15 19l-7-7 7-7"></path>
+                                        </svg>
+                                    </button>
+                                    <button onclick="changeMonth(1)"
+                                        class="p-2 rounded-lg bg-yellow-300 text-black hover:bg-yellow-400">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M9 5l7 7-7 7"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <button onclick="showCreateEventModal()"
+                                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                                Add Event
+                            </button>
+                        </div>
+
+                        <!-- Calendar Grid -->
+                        <div class="grid grid-cols-7 gap-1">
+                            <!-- Day Headers -->
+                            <div class="text-center font-medium p-3">Monday</div>
+                            <div class="text-center font-medium p-3">Tuesday</div>
+                            <div class="text-center font-medium p-3">Wednesday</div>
+                            <div class="text-center font-medium p-3">Thursday</div>
+                            <div class="text-center font-medium p-3">Friday</div>
+                            <div class="text-center font-medium p-3">Saturday</div>
+                            <div class="text-center font-medium p-3">Sunday</div>
+                        </div>
+                        <div id="calendar-grid" class="grid grid-cols-7 gap-1 mt-2"></div>
+                    </div>
+
+                    <!-- Event List -->
+                    <div class="w-80">
+                        <h3 class="text-lg font-semibold mb-4">Events This Month</h3>
+                        <div id="events-list" class="space-y-3">
+                            <!-- Events will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Event Modal -->
+            <div id="event-modal"
+                class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+                <div class="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 id="modal-title" class="text-lg font-semibold">Create Event</h3>
+                        <button onclick="closeEventModal()" class="text-gray-500 hover:text-gray-700">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <form id="event-form">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                                <input type="text" id="event-title"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    required>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Event Type</label>
+                                <select id="event-type"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="Study Session">Study Session</option>
+                                    <option value="Test/Practice">Test/Exam</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label for="event-class-link" class="block text-sm font-medium text-gray-700 mb-1">Class
+                                    Link</label>
+                                <input type="url" id="event-class-link" name="class_link"
+                                    placeholder="https://example.com/meet"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                            </div>
+
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                                <input type="date" id="event-date"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    required>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Start Time</label>
+                                    <input type="time" id="event-start-time"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">End Time</label>
+                                    <input type="time" id="event-end-time"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        required>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                                <textarea id="event-description" rows="3"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                            </div>
+
+                            <div id="event-notes-section" class="hidden">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+                                <textarea id="event-notes" rows="2"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                            </div>
+
+                            <div id="event-completed-section" class="hidden">
+                                <label class="flex items-center">
+                                    <input type="checkbox" id="event-completed" class="mr-2">
+                                    <span class="text-sm font-medium text-gray-700">Mark as completed</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-3 mt-6">
+                            <button type="button" onclick="closeEventModal()"
+                                class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50">
+                                Cancel
+                            </button>
+                            <button type="submit"
+                                class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                                Save Event
+                            </button>
+                            <button type="button" id="delete-event-btn" onclick="deleteEvent()"
+                                class="hidden px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
+                                Delete
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% include 'skills/footer.html' %}
+
+    <script>
+
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        function showTab(tabName) {
+            // Update UI to show loading
+            document.getElementById('loading-indicator').classList.remove('hidden');
+
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+
+            // Update tab button styles
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('border-blue-500', 'text-gray-900');
+                button.classList.add('text-gray-500');
+            });
+
+            // Style active tab
+            const activeTab = document.getElementById(`tab-${tabName}`);
+            activeTab.classList.remove('text-gray-500');
+            activeTab.classList.add('border-blue-500', 'text-gray-900');
+
+            // Get student ID from hidden input
+            const studentId = document.getElementById('student-id').value;
+
+            // Send AJAX request to server to log tab change and get fresh data
+            fetch(`/student/${studentId}/tab-change/${tabName}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({
+                    tab: tabName,
+                    student_id: studentId
+                })
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+
+                    // Hide loading indicator
+                    document.getElementById('loading-indicator').classList.add('hidden');
+
+                    // Show the tab content container
+                    document.getElementById(`tab-content-${tabName}`).classList.remove('hidden');
+
+                    // Update the content based on which tab was clicked
+                    if (tabName === 'assigned' && data.assigned_materials) {
+                        updateAssignedMaterialsContent(data.assigned_materials);
+                    } else if (tabName === 'assign' && data.available_materials) {
+                        updateAvailableMaterialsContent(data.available_materials);
+                    } else if (tabName == 'practice') {
+                        loadStudentTests();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error handling tab change:', error);
+                    // Hide loading indicator
+                    document.getElementById('loading-indicator').classList.add('hidden');
+                    // Show the tab anyway, with existing content
+                    document.getElementById(`tab-content-${tabName}`).classList.remove('hidden');
+                    // Show error message
+                    alert('There was a problem loading the latest data. Please try refreshing the page.');
+                });
+        }
+
+
+        function loadStudentTests() {
+            const studentId = document.getElementById('student-id').value;
+            const container = document.getElementById('tests-container');
+
+            // Show loading state
+            container.innerHTML = '<div class="text-center py-4">Loading tests...</div>';
+
+            fetch(`/api/get-assigned-tests/${studentId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.tests.length === 0) {
+                        container.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <h3 class="text-xl font-semibold mb-4">Practice Tests</h3>
+                        <div class="flex flex-col items-center">
+                            <svg class="w-12 h-12 mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            <p class="text-lg font-medium">No tests assigned yet</p>
+                            <p class="text-sm">Tests assigned to this student will appear here</p>
+                        </div>
+                    </div>
+                `;
+                        return;
+                    }
+
+                    let html = `
+                    <div class="bg-white">
+                        <h3 class="text-xl font-semibold mb-4">Practice Tests</h3>
+                <div class="overflow-x-auto rounded-xl shadow-md">
+                    
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-blue-600">
+                            <tr>
+                                <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">S.No</th>
+                                <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">Test Name</th>
+                                <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">Subject</th>
+                                <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">Duration</th>
+                                <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">Score</th>
+                                <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">Valid Until</th>
+                                <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+            `;
+
+                    data.tests.forEach((test, index) => {
+                        const status = test.completed
+                            ? `<span class="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-md">Completed</span>`
+                            : `<span class="px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-md">Pending</span>`;
+
+                        const score = test.completed
+                            ? `<span class="font-medium">${test.score}%</span>`
+                            : '<span class="text-gray-500">-</span>';
+
+                        const isExpired = new Date(test.valid_until) < new Date();
+                        const validUntil = `
+                    <span class="${isExpired ? 'text-red-600' : 'text-gray-600'}">
+                        ${test.valid_until}
+                        ${isExpired ? '<span class="ml-2 px-2 py-1 text-xs bg-red-100 text-red-800 rounded">Expired</span>' : ''}
+                    </span>
+                `;
+
+                        html += `
+                    <tr class="hover:bg-gray-50 transition-colors duration-150">
+                        <td class="px-6 py-4 text-center whitespace-nowrap text-sm text-gray-500 text-center">${index + 1}</td>
+                        <td class="px-6 py-4 text-center whitespace-nowrap text-sm font-medium text-gray-900">${test.name}</td>
+                        <td class="px-6 py-4 text-center whitespace-nowrap text-sm text-gray-500">
+                            <span class="inline-block px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-md">
+                                ${test.subject}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 text-center whitespace-nowrap text-sm text-gray-500">${test.duration} min</td>
+                        <td class="px-6 py-4 text-center whitespace-nowrap text-sm text-center">${status}</td>
+                        <td class="px-6 py-4 text-center whitespace-nowrap text-sm text-center">${score}</td>
+                        <td class="px-6 py-4 text-center whitespace-nowrap text-sm text-center">${validUntil}</td>
+                        <td class="px-6 py-4 text-center whitespace-nowrap text-sm text-center space-x-2">
+    <button onclick="viewTest(${test.id})"
+        class="inline-flex items-center px-3 py-1 rounded-md bg-blue-100 text-blue-800 hover:bg-blue-200 transition">
+        Result
+    </button>
+
+    <button onclick="revokeTest(${studentId}, ${test.id})"
+        class="inline-flex items-center px-3 py-1 rounded-md bg-red-100 text-red-800 hover:bg-red-200 transition">
+        Revoke
+    </button>
+
+    <button onclick="extendTestValidity(${studentId}, ${test.id})"
+        class="inline-flex items-center px-3 py-1 rounded-md bg-green-100 text-green-800 hover:bg-green-200 transition">
+        Extend
+    </button>
+</td>
+
+                    </tr>
+                `;
+                    });
+
+                    html += `
+                        </tbody>
+                    </table>
+                </div>
+                </div>
+            `;
+
+                    container.innerHTML = html;
+                })
+                .catch(error => {
+                    console.error('Error loading tests:', error);
+                    container.innerHTML = `
+                <div class="text-center py-4 text-red-500">
+                    Error loading tests. Please try again.
+                </div>
+            `;
+                });
+        }
+
+
+        function revokeTest(studentId, testId) {
+            if (!confirm('Are you sure you want to revoke this test assignment?')) return;
+
+            fetch(`/api/revoke-test/${studentId}/${testId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showAlert('Test assignment revoked successfully', 'success');
+                        loadStudentTests();
+                    } else {
+                        showAlert('Error revoking test: ' + data.message, 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showAlert('Error revoking test', 'error');
+                });
+        }
+
+        function extendTestValidity(studentId, testId) {
+            const newDate = prompt('Enter new expiration date (YYYY-MM-DD):');
+            if (!newDate) return;
+
+            // Basic date validation
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(newDate)) {
+                showAlert('Please enter a valid date in YYYY-MM-DD format', 'warning');
+                return;
+            }
+
+            fetch(`/api/extend-test/${studentId}/${testId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ valid_until: newDate })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showAlert('Test validity extended successfully', 'success');
+                        loadStudentTests();
+                    } else {
+                        showAlert('Error extending test: ' + data.message, 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showAlert('Error extending test', 'error');
+                });
+        }
+
+        function viewTest(testId) {
+            window.open(`/test/${testId}/results/`, '_blank');
+        }
+
+        function updateAssignedMaterialsContent(materials) {
+            const container = document.getElementById('assigned-materials-container');
+
+            if (Object.keys(materials).length === 0) {
+                container.innerHTML = `
+            <div class="text-center py-8 text-gray-500">
+                No materials have been assigned to this student yet.
+            </div>
+        `;
+                return;
+            }
+
+            // Flatten materials array for table view
+            let allMaterials = [];
+            let counter = 1;
+
+            for (const subject in materials) {
+                materials[subject].forEach(material => {
+                    allMaterials.push({
+                        ...material,
+                        subject: subject,
+                        serialNo: counter++
+                    });
+                });
+            }
+
+            let html = `
+        <div class="bg-white shadow rounded-lg overflow-hidden">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-blue-600">
+                    <tr>
+                        <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">S.No</th>
+                        <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">Subject</th>
+                        <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">Topics</th>
+                        <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">Sub Topics</th>
+                        <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">File Link</th>
+                        <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">Valid Until</th>
+                        <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="assignedMaterialTableBody" class="bg-white divide-y divide-gray-200">
+    `;
+
+            allMaterials.forEach(material => {
+                const expiredBadge = material.is_expired
+                    ? `<span class="inline-block px-2 py-1 text-xs font-medium bg-red-100 text-red-800 rounded-md ml-2">Expired</span>`
+                    : `<span class="inline-block px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-md ml-2">Active</span>`;
+
+                html += `
+            <tr class="hover:bg-gray-50 transition-colors duration-150 text-center material-row}"
+                data-subject="${material.subject.toLowerCase()}" 
+                data-grades="${material.grades ? material.grades.toString().toLowerCase() : ''}"
+                data-topic="${material.topic ? material.topic.toLowerCase() : ''}"
+                data-topic="${material.sub_topic ? material.sub_topic.toLowerCase() : ''}"
+                data-expired="${material.is_expired}">
+                <td class="py-4 whitespace-nowrap text-sm text-gray-500">${material.serialNo}</td>
+                <td class="py-4 text-gray-900">${material.subject}</td>
+                <td class="py-4 text-gray-900">
+                    <div class="flex items-center justify-center">
+                        <span class="inline-block px-3 py-1 text-sm font-medium bg-blue-100 text-blue-800 rounded-md">
+                            ${material.topic || 'N/A'}
+                        </span>
+                        ${material.short_video_link ? `
+                        <a href="${material.short_video_link}" target="_blank"
+                            class="ml-2 hover:underline inline-flex items-center text-red-600">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                            </svg>
+                        </a>
+                        ` : ''}
+                    </div>
+                </td>
+                <td class="py-4 text-gray-900">
+                    <span class="inline-block px-3 py-1 text-sm font-medium bg-slate-100 text-slate-800 rounded-md">
+                        ${material.sub_topic}
+                    </span>
+                </td>
+                <td class="py-4 whitespace-nowrap text-sm text-indigo-600 text-center">
+                    <div class="flex items-center justify-center space-x-2">
+                        <a href="${material.file_link}" target="_blank" class="hover:underline flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                            </svg>
+                            View File
+                        </a>
+                    </div>
+                </td>
+                <td class="py-4 whitespace-nowrap text-sm text-gray-900">
+                    <div class="flex items-center justify-center">
+                        <span class="${material.is_expired ? 'text-red-600' : 'text-gray-600'}">${material.valid_until}</span>
+                    </div>
+                </td>
+                <td class="py-4 whitespace-nowrap text-sm text-center">
+                    ${expiredBadge}
+                </td>
+                <td class="py-4 whitespace-nowrap text-sm text-center">
+                    <form method="POST" action="/student/${document.getElementById('student-id').value}/remove-material/${material.assignment_id}/" 
+                        class="inline-block" onsubmit="return confirm('Are you sure you want to remove this material?')">
+                        <input type="hidden" name="csrfmiddlewaretoken" value="${getCookie('csrftoken')}">
+                        <button type="submit"
+                            class="bg-red-500 hover:bg-red-600 text-white text-sm px-3 py-1 rounded transition duration-150 inline-flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                            Remove
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        `;
+            });
+
+            html += `
+                </tbody>
+            </table>
+        </div>
+    `;
+
+            container.innerHTML = html;
+        }
+
+        function updateAvailableMaterialsContent(materials) {
+            const container = document.getElementById('available-materials-container');
+
+            if (Object.keys(materials).length === 0) {
+                container.innerHTML = `
+            <div class="text-center py-8 text-gray-500">
+                No materials available for this student's grade.
+            </div>
+        `;
+                return;
+            }
+
+            // Flatten materials array for table view
+            let allMaterials = [];
+            let counter = 1;
+
+            for (const subject in materials) {
+                materials[subject].forEach(material => {
+                    allMaterials.push({
+                        ...material,
+                        subject: subject,
+                        serialNo: counter++
+                    });
+                });
+            }
+
+            const today = new Date().toISOString().split('T')[0];
+
+            let html = `
+        <div class="bg-white shadow rounded-lg overflow-hidden">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-blue-600">
+                    <tr>
+                        <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">S.No</th>
+                        <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">Subject</th>
+                        <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">Topics</th>
+                        <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">Sub Topics</th>
+                        <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">Grades</th>
+                        <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">File Link</th>
+                        <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="materialTableBody" class="bg-white divide-y divide-gray-200">
+    `;
+
+            allMaterials.forEach(material => {
+                html += `
+            <tr class="hover:bg-gray-50 transition-colors duration-150 text-center material-row"
+                data-subject="${material.subject.toLowerCase()}" 
+                data-grades="${material.grades.toString().toLowerCase()}"
+                data-topic="${material.topic ? material.topic.toLowerCase() : ''}"
+                data-topic="${material.sub_topic ? material.sub_topic.toLowerCase() : ''}"
+                data-date="">
+                <td class="py-4 whitespace-nowrap text-sm text-gray-500">${material.serialNo}</td>
+                <td class="py-4 text-gray-900">${material.subject}</td>
+                <td class="py-4 text-gray-900">
+                    <div class="flex items-center justify-center">
+                        <span class="inline-block px-3 py-1 text-sm font-medium bg-blue-100 text-blue-800 rounded-md">
+                            ${material.topic}
+                        </span>
+                        ${material.short_video_link ? `
+                        <a href="${material.short_video_link}" target="_blank"
+                            class="ml-2 hover:underline inline-flex items-center text-red-600">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                            </svg>
+                        </a>
+                        ` : ''}
+                    </div>
+                </td>
+                <td class="py-4 text-gray-900">
+                    <span class="inline-block px-3 py-1 text-sm font-medium bg-slate-100 text-slate-800 rounded-md">
+                        ${material.sub_topic}
+                    </span>
+                </td>
+                <td class="py-4 text-gray-900">
+                    <span class="inline-block px-3 py-1 text-sm font-medium bg-green-100 text-green-800 rounded-md">
+                        ${material.grades}
+                    </span>
+                </td>
+                <td class="py-4 whitespace-nowrap text-sm text-indigo-600 text-center">
+                    <div class="flex items-center justify-center space-x-2">
+                        <a href="${material.file_link}" target="_blank" class="hover:underline flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                            </svg>
+                            View File
+                        </a>
+                    </div>
+                </td>
+                
+                <td class="py-4 whitespace-nowrap flex items-center justify-center">
+                    
+                <form method="POST" action="/student/${document.getElementById('student-id').value}/assign-material/${material.id}/" class="flex items-center space-x-2">
+                                    <input type="hidden" name="csrfmiddlewaretoken" value="${getCookie('csrftoken')}">
+                                    <input type="date" name="valid_until" required class="border rounded px-2 py-1" min="${today}">
+                                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white text-sm px-3 py-1 rounded transition">
+                                        Assign
+                                    </button>
+                                </form>
+                </td>
+            </tr>
+        `;
+            });
+
+            html += `
+                </tbody>
+            </table>
+        </div>
+    `;
+
+            container.innerHTML = html;
+        }
+
+
+        let currentDate = new Date();
+        let currentEvents = [];
+        let editingEventId = null;
+
+        function renderCalendar() {
+            const monthNames = ["January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"];
+
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+
+            document.getElementById('calendar-month-year').textContent = `${monthNames[month]} ${year}`;
+
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const today = new Date();
+
+            // Get first Monday of calendar (might be from previous month)
+            const startDate = new Date(firstDay);
+            const dayOfWeek = firstDay.getDay();
+            const daysToSubtract = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+            startDate.setDate(firstDay.getDate() - daysToSubtract);
+
+            const calendarGrid = document.getElementById('calendar-grid');
+            calendarGrid.innerHTML = '';
+
+            // Generate 42 days (6 weeks)
+            for (let i = 0; i < 42; i++) {
+                const currentDay = new Date(startDate);
+                currentDay.setDate(startDate.getDate() + i);
+
+                const dayElement = document.createElement('div');
+                dayElement.className = 'relative p-3 h-20 border border-blue-100 cursor-pointer hover:bg-blue-50';
+                dayElement.onclick = () => selectDate(currentDay);
+
+                const dayNumber = document.createElement('div');
+                dayNumber.textContent = currentDay.getDate();
+
+                // Style different types of days
+                if (currentDay.getMonth() !== month) {
+                    // Previous/next month days
+                    dayElement.className += ' bg-blue-100 text-blue-400';
+                } else if (currentDay.toDateString() === today.toDateString()) {
+                    // Today
+                    dayElement.className += ' bg-blue-800 text-white hover:bg-blue-600';
+                    dayNumber.className = 'font-bold';
+                } else {
+                    // Current month days
+                    dayElement.className += ' bg-white text-blue-700';
+                }
+
+                // Add events for this day
+                const dayEvents = currentEvents.filter(event => {
+                    const eventDate = new Date(event.event_date);
+                    return eventDate.toDateString() === currentDay.toDateString();
+                });
+
+                if (dayEvents.length > 0) {
+                    const eventDot = document.createElement('div');
+                    eventDot.className = 'absolute bottom-1 right-1 w-2 h-2 bg-red-500 rounded-md';
+                    dayElement.appendChild(eventDot);
+                }
+
+                dayElement.appendChild(dayNumber);
+                calendarGrid.appendChild(dayElement);
+            }
+        }
+
+        function changeMonth(direction) {
+            currentDate.setMonth(currentDate.getMonth() + direction);
+            loadEventsForMonth();
+        }
+
+        function selectDate(date) {
+            const formattedDate = date.toISOString().split('T')[0];
+            document.getElementById('event-date').value = formattedDate;
+            showCreateEventModal();
+        }
+
+        function loadEventsForMonth() {
+            const studentId = document.getElementById('student-id').value;
+            const month = currentDate.getMonth() + 1;
+            const year = currentDate.getFullYear();
+
+            fetch(`/student/${studentId}/tab-change/event/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({
+                    tab: 'event',
+                    student_id: studentId,
+                    month: month,
+                    year: year
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        currentEvents = data.events || [];
+                        renderCalendar();
+                        updateEventsList();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading events:', error);
+                });
+        }
+
+        function updateEventsList() {
+            const eventsList = document.getElementById('events-list');
+
+            if (currentEvents.length === 0) {
+                eventsList.innerHTML = '<div class="text-center py-8"><p class="text-gray-500">No events scheduled</p></div>';
+                return;
+            }
+
+            eventsList.innerHTML = currentEvents.map(event => `
+        <div class="border rounded-lg p-4 hover:shadow-md cursor-pointer" onclick="editEvent(${event.id})">
+            <div class="flex justify-between items-start">
+                <div>
+                    <h4 class="font-medium text-gray-900">${event.title}</h4>
+                    <p class="text-sm text-gray-600">${event.event_type_display}</p>
+                    <p class="text-sm text-gray-500">${formatDate(event.event_date)} at ${event.start_time} - ${event.end_time}</p>
+                    ${event.description ? `<p class="text-sm text-gray-600 mt-1">${event.description}</p>` : ''}
+                </div>
+                <div class="flex items-center gap-2">
+                    ${event.is_completed ?
+                    '<span class="text-green-600 text-sm">✓ Completed</span>' :
+                    '<span class="text-gray-400 text-sm">Pending</span>'
+                }
+                </div>
+            </div>
+        </div>
+    `).join('');
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const options = {
+                weekday: 'short',
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            };
+            return date.toLocaleDateString('en-US', options);
+        }
+
+        function showCreateEventModal() {
+            editingEventId = null;
+            document.getElementById('modal-title').textContent = 'Create Event';
+            document.getElementById('event-form').reset();
+            document.getElementById('event-notes-section').classList.add('hidden');
+            document.getElementById('event-completed-section').classList.add('hidden');
+            document.getElementById('delete-event-btn').classList.add('hidden');
+            document.getElementById('event-modal').classList.remove('hidden');
+        }
+
+        function editEvent(eventId) {
+            const event = currentEvents.find(e => e.id === eventId);
+            if (!event) return;
+
+            editingEventId = eventId;
+            document.getElementById('modal-title').textContent = 'Edit Event';
+
+            // Populate form
+            document.getElementById('event-title').value = event.title;
+            document.getElementById('event-type').value = event.event_type;
+            document.getElementById('event-date').value = event.event_date;
+            document.getElementById('event-class-link').value = event.class_link;
+            document.getElementById('event-start-time').value = event.start_time;
+            document.getElementById('event-end-time').value = event.end_time;
+            document.getElementById('event-description').value = event.description || '';
+            document.getElementById('event-notes').value = event.notes || '';
+            document.getElementById('event-completed').checked = event.is_completed;
+
+            // Show additional fields for editing
+            document.getElementById('event-notes-section').classList.remove('hidden');
+            document.getElementById('event-completed-section').classList.remove('hidden');
+            document.getElementById('delete-event-btn').classList.remove('hidden');
+
+            document.getElementById('event-modal').classList.remove('hidden');
+        }
+
+        function closeEventModal() {
+            document.getElementById('event-modal').classList.add('hidden');
+            editingEventId = null;
+        }
+
+        function deleteEvent() {
+            if (!editingEventId) return;
+
+            if (!confirm('Are you sure you want to delete this event?')) return;
+
+            const studentId = document.getElementById('student-id').value;
+
+            fetch(`/student/${studentId}/event/${editingEventId}/delete/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        closeEventModal();
+                        loadEventsForMonth();
+                    } else {
+                        alert('Error deleting event: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error deleting event:', error);
+                    alert('Error deleting event');
+                });
+        }
+
+        // Handle form submission
+        document.getElementById('event-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const studentId = document.getElementById('student-id').value;
+            const eventData = {
+                title: document.getElementById('event-title').value,
+                event_type: document.getElementById('event-type').value,
+                event_date: document.getElementById('event-date').value,
+                class_link: document.getElementById('event-class-link').value,
+                start_time: document.getElementById('event-start-time').value,
+                end_time: document.getElementById('event-end-time').value,
+                description: document.getElementById('event-description').value,
+                notes: document.getElementById('event-notes').value,
+                is_completed: document.getElementById('event-completed').checked
+            };
+
+            const url = editingEventId ?
+                `/student/${studentId}/event/${editingEventId}/update/` :
+                `/student/${studentId}/event/create/`;
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify(eventData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        closeEventModal();
+                        loadEventsForMonth();
+                    } else {
+                        alert('Error saving event: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error saving event:', error);
+                    alert('Error saving event');
+                });
+        });
+
+        // Update the showTab function to handle events
+        function showTab(tabName) {
+            // Update UI to show loading
+            document.getElementById('loading-indicator').classList.remove('hidden');
+
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+
+            // Update tab button styles
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('border-blue-500', 'text-gray-900');
+                button.classList.add('text-gray-500');
+            });
+
+            // Style active tab
+            const activeTab = document.getElementById(`tab-${tabName}`);
+            activeTab.classList.remove('text-gray-500');
+            activeTab.classList.add('border-blue-500', 'text-gray-900');
+
+            // Get student ID from hidden input
+            const studentId = document.getElementById('student-id').value;
+
+            // Handle event tab specially
+            if (tabName === 'event') {
+                document.getElementById('loading-indicator').classList.add('hidden');
+                document.getElementById(`tab-content-${tabName}`).classList.remove('hidden');
+                loadEventsForMonth();
+                return;
+            }
+
+            // Send AJAX request to server to log tab change and get fresh data
+            fetch(`/student/${studentId}/tab-change/${tabName}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({
+                    tab: tabName,
+                    student_id: studentId
+                })
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Hide loading indicator
+                    document.getElementById('loading-indicator').classList.add('hidden');
+
+                    // Show the tab content container
+                    document.getElementById(`tab-content-${tabName}`).classList.remove('hidden');
+
+                    // Update the content based on which tab was clicked
+                    if (tabName === 'assigned' && data.assigned_materials) {
+                        updateAssignedMaterialsContent(data.assigned_materials);
+                    } else if (tabName === 'assign' && data.available_materials) {
+                        updateAvailableMaterialsContent(data.available_materials);
+                    } else if (tabName == 'practice') {
+                        loadStudentTests();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error handling tab change:', error);
+                    // Hide loading indicator
+                    document.getElementById('loading-indicator').classList.add('hidden');
+                    // Show the tab anyway, with existing content
+                    document.getElementById(`tab-content-${tabName}`).classList.remove('hidden');
+                    // Show error message
+                    alert('There was a problem loading the latest data. Please try refreshing the page.');
+                });
+        }
+
+        // Initialize calendar when page loads
+        document.addEventListener('DOMContentLoaded', function () {
+            renderCalendar();
+        });
+    </script>
+</body>
+
+</html>

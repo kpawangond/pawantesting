@@ -1,0 +1,113 @@
+{% load static tailwind_tags %}
+
+<style>
+    @keyframes fadeInUpRight {
+        0% {
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .fade-in-up-main {
+        opacity: 0;
+        transform: translateY(50px);
+        transition: all 0.8s ease-out;
+    }
+
+    .fade-in-up-main.visible {
+        animation: fadeInUpRight 0.8s ease-out forwards;
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const animated = document.querySelector(".fade-in-up-main");
+
+        const observer = new IntersectionObserver(
+            entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("visible");
+                        observer.unobserve(entry.target);
+                    }
+                });
+            },
+            {
+                threshold: 0.3,
+            }
+        );
+
+        if (animated) {
+            observer.observe(animated);
+        }
+    });
+</script>
+
+<section class="relative py-16 sm:py-24 overflow-hidden">
+    <div class="container mx-auto flex flex-col lg:flex-row items-center px-6 text-gray-800">
+
+        <!-- Content -->
+        <div class="lg:w-[60%] text-center lg:text-left mt-12 lg:mt-0">
+            <p class="text-blue-600 font-semibold text-lg sm:text-xl">
+                Personalized Math Programs for Grades 1-10
+            </p>
+            <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold sm:mt-4" style="line-height: 1.2;">
+                Master Math. Accelerate Learning.
+                <span class="text-blue-600">Build Confidence.</span>
+            </h1>
+
+            <!-- Supporting Paragraph -->
+            <p class="text-gray-600 mt-4 text-base sm:text-lg">
+                Give your child the skills and confidence to excel in math with our individualized learning approach.
+                Whether they need grade-level mastery, acceleration, or targeted help with specific modules — we’ve got
+                them covered.
+            </p>
+
+            <!-- Key Features -->
+            <ul class="text-left space-y-4 text-gray-600 mt-4 text-base sm:text-lg">
+                <li class="flex items-start">
+                    <span class="mr-3 text-xl">✔</span>
+                    <span>Grades 1–10 | Live, Interactive Classes</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="mr-3 text-xl">✔</span>
+                    <span>1:1 Personalized Attention from Certified Instructors</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="mr-3 text-xl">✔</span>
+                    <span>Tailored to Your Child’s Learning Needs & Goals</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="mr-3 text-xl">✔</span>
+                    <span>Accelerate an Entire Grade Level in Just 9 Months!</span>
+                </li>
+            </ul>
+
+            <!-- Buttons -->
+            <div class="mt-6 flex sm:flex-row gap-4 items-center justify-center lg:justify-start w-full sm:w-auto">
+                <a href="{% url 'book_demo' %}"
+                    class="flex items-center gap-2 font-semibold bg-blue-600 px-6 py-3 rounded-full text-white hover:bg-blue-700 transition duration-300">
+                    Book A Free Trial
+                </a>
+                <button
+                    class="flex items-center gap-2 font-semibold border border-blue-600 px-6 py-3 rounded-full text-blue-600 hover:bg-blue-600 hover:text-white transition duration-300">
+                    Explore Courses
+                </button>
+            </div>
+        </div>
+
+
+
+        <!-- Image with scroll-triggered animation -->
+        <div class="lg:w-1/2 mt-12 lg:mt-0 relative flex justify-center h-[580px]">
+            <img src="{% static 'img/CoursesPage/math/hero.jpg' %}" alt=""
+                class="fade-in-up-main object-cover object-[40%_20%] w-[80%] h-full rounded-xl drop-shadow-xl" />
+
+        </div>
+    </div>
+</section>

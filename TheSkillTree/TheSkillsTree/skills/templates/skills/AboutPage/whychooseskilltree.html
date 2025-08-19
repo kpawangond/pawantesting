@@ -1,0 +1,107 @@
+{% load static tailwind_tags %}
+
+<style>
+    @keyframes fadeInUpRight {
+        0% {
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .fade-in-up2 {
+        opacity: 0;
+        transform: translateY(50px);
+        transition: all 0.8s ease-out;
+    }
+
+    .fade-in-up2.visible {
+        animation: fadeInUpRight 0.8s ease-out forwards;
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const animated = document.querySelector(".fade-in-up2");
+
+        const observer = new IntersectionObserver(
+            entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("visible");
+                        observer.unobserve(entry.target);
+                    }
+                });
+            },
+            {
+                threshold: 0.3,
+            }
+        );
+
+        if (animated) {
+            observer.observe(animated);
+        }
+    });
+</script>
+
+<section class="py-16 sm:py-20 bg-blue-50">
+    <div class="container mx-auto flex flex-col lg:flex-row items-center px-6 text-gray-800">
+
+        <!-- Content -->
+        <div class="lg:w-1/2 text-center lg:text-left mt-12 lg:mt-0">
+            
+            <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold sm:mt-4" style="line-height: 1.2;">
+                🎯 Why Choose 
+                <span class="text-blue-600">The Skills’ Tree?</span>
+            </h1>
+
+            <!-- Key Features -->
+            <ul class="mt-6 text-left space-y-4 text-gray-700 text-base sm:text-lg md:text-xl">
+                <li class="flex items-start">
+                    <span class="mr-3 text-xl">✔</span>
+                    <span class="text-gray-600 font-semibold">Personalized Learning Plans – Students pay only for the modules they need, not for the entire course.</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="mr-3 text-xl">✔</span>
+                    <span class="text-gray-600 font-semibold">No Missed Class Charges-
+                     Life happens! If a class is missed, students aren’t charged. </span>
+                </li>
+                <li class="flex items-start">
+                    <span class="mr-3 text-xl">✔</span>
+                    <span class="text-gray-600 font-semibold">Flexible Scheduling – Learn at your own pace with easy rescheduling options.</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="mr-3 text-xl">✔</span>
+                    <span class="text-gray-600 font-semibold">Dedicated Teacher Support – One-on-one guidance to help students stay on track.</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="mr-3 text-xl">✔</span>
+                    <span class="text-gray-600 font-semibold">Advanced Learning Tools – We integrate GeoGebra for Math visualization and offer a gigantic library of practice materials & assessments.</span>
+                </li>
+
+                <li class="flex items-start">
+                    <span class="mr-3 text-xl">✔</span>
+                    <span class="text-gray-600 font-semibold">Student Progress Tracking – Our custom-built dashboard helps students track their improvement in real time.</span>
+                </li>
+            </ul>
+            <!-- Button -->
+            <div class="mt-6 flex sm:flex-row gap-4 items-center w-full sm:w-auto">
+                <a href=""
+                    class="flex items-center gap-2 font-semibold bg-blue-600 px-6 py-3 rounded-full text-white hover:bg-blue-700 transition duration-300">
+                    Book a Free Demo
+                </a>
+            </div>
+        </div>
+
+
+        <!-- Image with scroll-triggered animation -->
+        <div class="lg:w-1/2 mt-12 lg:mt-0 relative flex justify-center">
+            <img src="{% static 'img/CoursesPage/math/modularMath.webp' %}" alt="About Rector"
+                class="fade-in-up2 w-[60%] sm:w-[70%] md:w-[80%] lg:w-[75%] object-cover ml-auto drop-shadow-xl" />
+        </div>
+    </div>
+</section>

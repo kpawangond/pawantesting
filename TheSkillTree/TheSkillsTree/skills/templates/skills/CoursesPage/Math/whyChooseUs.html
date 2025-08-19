@@ -1,0 +1,52 @@
+{% load static tailwind_tags bootstrap_icons %}
+
+<section class="bg-primary py-16 bg-blue-600 text-white text-center border-0">
+    <div class="container mx-auto px-6 max-w-7xl">
+        <!-- Heading -->
+        <h2 class="text-4xl font-extrabold mb-6 flex items-center justify-center gap-2">
+            Why Choose Our Math Program?
+        </h2>
+        <p class="text-lg mb-12 max-w-2xl mx-auto">
+            School teaches for an average child, while your kid may need more...
+        </p>
+
+        <!-- 3 Column Layout -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left text-lg">
+            <!-- Column 1 -->
+            <div class="space-y-6">
+                <div class="flex items-start gap-3">
+                    {% bs_icon 'check-circle-fill' size='24px' extra_classes="text-white mt-1" %}
+                    <strong>Customized Learning Plans</strong>
+                </div>
+                <div class="flex items-start gap-3">
+                    {% bs_icon 'people-fill' size='24px' extra_classes="text-white mt-1" %}
+                    <strong>Small Batch & 1:1 Instruction</strong>
+                </div>
+            </div>
+
+            <!-- Column 2 -->
+            <div class="space-y-6">
+                <div class="flex items-start gap-3">
+                    {% bs_icon 'camera-video-fill' size='24px' extra_classes="text-white mt-1" %}
+                    <strong>Live, Interactive Classes</strong>
+                </div>
+                <div class="flex items-start gap-3">
+                    {% bs_icon 'pencil' size='24px' extra_classes="text-white mt-1" %}
+                    <strong>Hands-On Learning</strong>
+                </div>
+            </div>
+
+            <!-- Column 3 -->
+            <div class="space-y-6">
+                <div class="flex items-start gap-3">
+                    {% bs_icon 'graph-up-arrow' size='24px' extra_classes="text-white mt-1" %}
+                    <strong>Trackable Progress</strong>
+                </div>
+                <div class="flex items-start gap-3">
+                    {% bs_icon 'award-fill' size='24px' extra_classes="text-white mt-1" %}
+                    <strong>Expert Math Tutors</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

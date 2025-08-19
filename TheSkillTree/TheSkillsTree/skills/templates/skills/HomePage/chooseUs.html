@@ -1,0 +1,101 @@
+{% load static tailwind_tags bootstrap_icons %}
+<div class="bg-blue-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16 text-gray-800">
+        <div class="flex flex-col-reverse lg:flex-row items-center lg:justify-between gap-8 lg:gap-12">
+
+            <!-- Left side with features -->
+            <div class="w-full lg:w-1/2 text-center lg:text-left">
+                <div class="mb-8 sm:mb-10">
+                    <p class="text-blue-600 font-medium mb-2 text-sm sm:text-base">Why Choose Us</p>
+                    <h2 class="text-3xl sm:text-4xl font-bold mb-2">
+                        Benefits of Our Live Online Classes
+                    </h2>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
+                    <!-- Feature 1 -->
+                    <div class="flex flex-col items-center sm:flex-row sm:items-start gap-3 sm:gap-4">
+                        <div class="bg-amber-400 rounded-full p-3 w-14 h-14 flex items-center justify-center">
+                            {% bs_icon 'mortarboard' size='28px' extra_classes="text-white" %}
+                        </div>
+                        <span class="text-center sm:text-left text-base sm:text-xl font-medium text-text">
+                            Expert-Led Instruction
+                        </span>
+                    </div>
+
+                    <!-- Feature 2 -->
+                    <div class="flex flex-col items-center sm:flex-row sm:items-start gap-3 sm:gap-4">
+                        <div class="bg-teal-500 rounded-full p-3 w-14 h-14 flex items-center justify-center">
+                            {% bs_icon 'headset' size='28px' extra_classes="text-white" %}
+                        </div>
+                        <span class="text-center sm:text-left text-base sm:text-xl font-medium text-text">
+                            Interactive & Visualized Learning
+                        </span>
+                    </div>
+
+                    <!-- Feature 3 -->
+                    <div class="flex flex-col items-center sm:flex-row sm:items-start gap-3 sm:gap-4">
+                        <div class="bg-blue-500 rounded-full p-3 w-14 h-14 flex items-center justify-center">
+                            {% bs_icon 'file-text' size='28px' extra_classes="text-white" %}
+                        </div>
+                        <span class="text-center sm:text-left text-base sm:text-xl font-medium text-text">
+                            360° Skill Development
+                        </span>
+                    </div>
+
+                    <!-- Feature 4 -->
+                    <div class="flex flex-col items-center sm:flex-row sm:items-start gap-3 sm:gap-4">
+                        <div class="bg-pink-500 rounded-full p-3 w-14 h-14 flex items-center justify-center">
+                            {% bs_icon 'award' size='28px' extra_classes="text-white" %}
+                        </div>
+                        <span class="text-center sm:text-left text-base sm:text-xl font-medium text-text">
+                            Accelerated Curriculum
+                        </span>
+                    </div>
+
+                    <!-- Feature 5 -->
+                    <div class="flex flex-col items-center sm:flex-row sm:items-start gap-3 sm:gap-4">
+                        <div class="bg-teal-500 rounded-full p-3 w-14 h-14 flex items-center justify-center">
+                            {% bs_icon 'journal-check' size='28px' extra_classes="text-white" %}
+                        </div>
+                        <span class="text-center sm:text-left text-base sm:text-xl font-medium text-text">
+                            Daily Practice
+                        </span>
+                    </div>
+
+                    <!-- Feature 6 -->
+                    <div class="flex flex-col items-center sm:flex-row sm:items-start gap-3 sm:gap-4">
+                        <div class="bg-amber-400 rounded-full p-3 w-14 h-14 flex items-center justify-center">
+                            {% bs_icon 'stopwatch' size='28px' extra_classes="text-white" %}
+                        </div>
+                        <span class="text-center sm:text-left text-base sm:text-xl font-medium text-text">
+                            Real-Time Tests
+                        </span>
+                    </div>
+
+                </div>
+
+
+            </div>
+
+            <!-- Right side with image -->
+            <div class="w-[80%] lg:w-[30%] flex justify-center lg:justify-end mb-8 lg:mb-0">
+                <div class="relative rounded-lg overflow-hidden shadow-xl max-w-md">
+                    <img src="https://images.pexels.com/photos/5212350/pexels-photo-5212350.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+                        alt="Students learning together" class="w-full h-auto object-cover" />
+
+                    <!-- Play button overlay -->
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <div
+                            class="w-12 h-12 sm:w-16 sm:h-16 bg-white bg-opacity-80 rounded-full flex items-center justify-center">
+                            <div
+                                class="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-full flex items-center justify-center shadow-md">
+                                {% bs_icon 'play' size='20px' extra_classes="text-gray-800 ml-1" %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

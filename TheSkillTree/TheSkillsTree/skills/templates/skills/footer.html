@@ -1,0 +1,94 @@
+{% load static tailwind_tags bootstrap_icons %}
+
+<footer class="bg-[#12121a] text-white">
+    <!-- Main Footer Content -->
+    <div
+        class="max-w-7xl mx-auto px-6 pb-14 pt-24 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 text-center md:text-left">
+
+        <!-- About Section -->
+        <div>
+            <h2 class="text-2xl font-bold flex items-center justify-center md:justify-start gap-2">
+                The Skills Tree
+            </h2>
+            <p class="text-gray-400 mt-3 text-sm">
+                Mattis inelit neque quis donec eleifend amet. Amet sed cursus eu euismod. Egestas in morbi tristique
+                ornare vulputate vitae enim.
+            </p>
+            <div class="flex justify-center md:justify-start gap-4 mt-4">
+                <a href="#" class="text-gray-400 hover:text-white">{% bs_icon 'facebook' size='24px' %}</a>
+                <a href="#" class="text-gray-400 hover:text-white">{% bs_icon 'twitter' size='24px' %}</a>
+                <a href="#" class="text-gray-400 hover:text-white">{% bs_icon 'linkedin' size='24px' %}</a>
+                <a href="#" class="text-gray-400 hover:text-white">{% bs_icon 'instagram' size='24px' %}</a>
+            </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div>
+            <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+            <ul class="text-gray-400 space-y-2 text-sm">
+                <li><a href="#" class="hover:text-white">Home</a></li>
+                <li><a href="#" class="hover:text-white">About Us</a></li>
+                <li><a href="#" class="hover:text-white">Featured Courses</a></li>
+                <li><a href="#" class="hover:text-white">Teachers</a></li>
+                <li><a href="#" class="hover:text-white">Latest News</a></li>
+            </ul>
+        </div>
+
+        <!-- Useful Links -->
+        <div>
+            <h3 class="text-lg font-semibold mb-4">Useful Links</h3>
+            <ul class="text-gray-400 space-y-2 text-sm">
+                <li><a href="#" class="hover:text-white">Contact Us</a></li>
+                <li><a href="#" class="hover:text-white">Courses</a></li>
+                <li><a href="#" class="hover:text-white">Lesson</a></li>
+                <li><a href="#" class="hover:text-white">Sign Up</a></li>
+                <li><a href="#" class="hover:text-white">Testimonials</a></li>
+            </ul>
+        </div>
+
+        <!-- Contact Section -->
+        <div>
+            <h3 class="font-semibold mb-4">Contact Us</h3>
+
+            <div class="flex flex-col items-center sm:flex-row sm:items-start gap-2 sm:gap-4 mt-2">
+                {% bs_icon 'envelope' size='18px' extra_classes="text-primary" %}
+                <span class="text-center sm:text-left text-sm font-medium text-text">
+                    TheSkillsTree@gmail.com
+                </span>
+            </div>
+
+            <div class="flex flex-col items-center sm:flex-row sm:items-start gap-2 sm:gap-4 mt-2">
+                {% bs_icon 'telephone' size='18px' extra_classes="text-primary" %}
+                <span class="text-center sm:text-left text-sm font-medium text-text">
+                    (208) 555-0112
+                </span>
+            </div>
+
+            <div class="flex flex-col items-center sm:flex-row sm:items-start gap-2 sm:gap-4 mt-2">
+                {% bs_icon 'geo-alt' size='18px' extra_classes="text-primary" %}
+                <span class="text-center sm:text-left text-sm font-medium text-text">
+                    4517 Washington Ave, Kentucky
+                </span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Bottom Footer -->
+    <div
+        class="border-t border-gray-700 text-gray-400 text-sm py-4 text-center md:text-left flex flex-col md:flex-row justify-center md:justify-between items-center px-6">
+        <p>© 2025 <b class="text-white">The Skills Tree</b>. All rights reserved.</p>
+        <ul class="flex flex-wrap justify-center md:justify-start gap-4 mt-2 md:mt-0">
+            <li><a href="#" class="hover:text-white">Privacy & Policy</a></li>
+            <li><a href="#" class="hover:text-white">Terms</a></li>
+            <li><a href="#" class="hover:text-white">About us</a></li>
+            <li><a href="#" class="hover:text-white">FAQ</a></li>
+        </ul>
+    </div>
+
+    <!-- Scroll to Top Button -->
+    <a href="#"
+        class="fixed bottom-5 right-5 bg-yellow-400 text-black p-3 rounded-full shadow-md hover:bg-yellow-500 transition">
+        {% bs_icon 'arrow-up' size='20px' %}
+    </a>
+</footer>

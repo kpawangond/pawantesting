@@ -1,0 +1,59 @@
+{% load static tailwind_tags %}
+
+<style>
+    /* Swipe Up Animation */
+    .counter {
+        transform: translateY(30px);
+        opacity: 0;
+        transition: transform 0.8s ease-out, opacity 0.8s ease-out;
+    }
+
+    .counter.visible {
+        transform: translateY(0);
+        opacity: 1;
+    }
+</style>
+
+<section class="bg-primary py-16 bg-blue-600">
+    <div class="container mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 text-white text-center">
+        <div class="border-r border-white pr-4">
+            <h2 class="text-3xl font-bold counter">40+</h2>
+            <p class="text-lg">Courses</p>
+        </div>
+        <div class="border-r border-white pr-4">
+            <h2 class="text-3xl font-bold counter">1k+</h2>
+            <p class="text-lg">Learners</p>
+        </div>
+        <div class="border-r border-white pr-4">
+            <h2 class="text-3xl font-bold counter">200+</h2>
+            <p class="text-lg">Test Series</p>
+        </div>
+        <div>
+            <h2 class="text-3xl font-bold counter">10k+</h2>
+            <p class="text-lg">Practice Material</p>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const counters = document.querySelectorAll(".counter");
+
+        // Intersection Observer to detect when the section is visible
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("visible");
+                        observer.unobserve(entry.target); // Run only once
+                    }
+                });
+            },
+            { threshold: 0.5 } // Trigger when 50% is visible
+        );
+
+        counters.forEach((counter) => {
+            observer.observe(counter);
+        });
+    });
+</script>

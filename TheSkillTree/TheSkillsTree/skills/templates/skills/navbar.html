@@ -1,0 +1,780 @@
+{% load static tailwind_tags %}
+
+<style>
+    .group:hover .group-hover\:visible {
+        visibility: visible;
+    }
+
+    .group:hover .group-hover\:opacity-100 {
+        opacity: 1;
+    }
+</style>
+
+<nav class="py-6 px-6 bg-white">
+    <div class="container mx-auto flex justify-between items-center">
+
+        <!-- Left Section: Logo -->
+        <div class="flex items-center space-x-2">
+            <img src="{% static 'img/Logo.webp' %}" alt="Logo" class="w-[150px]">
+        </div>
+
+        <!-- Middle Section: Desktop Navigation -->
+        <ul class="hidden md:flex space-x-10 text-text text-lg text-gray-600 select-none">
+            <li class="transition duration-300 cursor-pointer hover:text-gray-800"><a href="{% url 'home' %}">Home</a>
+            </li>
+            <li class="transition duration-300 cursor-pointer hover:text-gray-800"><a href="{% url 'about' %}">About
+                    Us</a></li>
+            <li class="transition duration-300 cursor-pointer hover:text-gray-800"><a href="{% url 'contact' %}">Contact
+                    Us </a></li>
+            <li class="transition duration-300 cursor-pointer hover:text-gray-800">Shop</li>
+
+            <!-- Clickable Dropdown for Courses -->
+            <li class="relative cursor-pointer flex items-center space-x-1 transition duration-300 hover:text-gray-800"
+                id="desktop-dropdown-btn">
+                <span>Courses</span>
+                <svg id="desktop-arrow" class="w-4 h-4 transition-transform duration-300" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+
+                <!-- Dropdown Menu -->
+                <ul id="desktop-dropdown" class="absolute left-0 top-10 bg-white shadow-lg rounded-lg py-2 w-48 text-gray-600 z-50 
+                    opacity-0 invisible transition duration-300">
+                    <li class="px-4 py-2 text-gray-600 hover:text-gray-800 transition duration-200">
+                        <a href="{% url 'math' %}">Math</a>
+                    </li>
+                    <li class="px-4 py-2 text-gray-600 hover:text-gray-800 transition duration-200">
+                        <a href="{% url 'public_speaking' %}">Public Speaking</a>
+                    </li>
+                    <li class="px-4 py-2 text-gray-600 hover:text-gray-800 transition duration-200">ELA</li>
+                    <li class="px-4 py-2 text-gray-600 hover:text-gray-800 transition duration-200">Personalized Course
+                    </li>
+                </ul>
+            </li>
+        </ul>
+
+        <!-- Right Section: Buttons -->
+        <div class="hidden md:flex space-x-4 relative">
+            {% if request.session.is_logged_in %}
+            <div class="flex items-center space-x-2 relative group">
+                {% if profile_picture_url %}
+                <div class="relative">
+                    <img src="{{ profile_picture_url }}" alt="Profile"
+                        class="w-10 h-10 rounded-full object-cover cursor-pointer">
+
+                    <!-- Profile Dropdown Menu -->
+                    <div
+                        class="absolute right-0 mt-2 w-72 bg-white rounded-md shadow-lg z-50 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-300 border border-gray-200">
+                        <div class="p-4">
+                            <div class="flex items-center space-x-3 mb-3">
+                                <img src="{{ profile_picture_url }}" alt="Profile"
+                                    class="w-12 h-12 rounded-full object-cover">
+                                <div>
+                                    <p class="font-semibold text-gray-900">{{ user.student_name }}</p>
+                                    <p class="text-sm text-gray-500">{{ user.email }}</p>
+                                </div>
+                            </div>
+                            <div class="space-y-2 border-t border-gray-200 pt-2">
+                                <p class="text-sm"><span class="font-medium">Parent:</span> {{ user.parent_name }}</p>
+                                <p class="text-sm"><span class="font-medium">Grade:</span> {{ user.grade }}</p>
+                            </div>
+                            <div class="mt-3 pt-3 border-t border-gray-200">
+                                <a href="{% url 'dashboard' %}"
+                                    class="block text-sm text-blue-600 hover:text-blue-800">My Dashboard</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <a href="{% url 'logout' %}"
+                class="bg-yellow-400 px-6 py-2 rounded-full hover:bg-yellow-500 hover:text-gray-800 transition duration-300">
+                Logout
+            </a>
+            {% else %}
+            <!-- Sign In with Dropdown -->
+            <div class="relative group">
+                <button
+                    class="bg-button-primary text-gray-800 hover:text-yellow-400 px-6 py-2 rounded-full transition duration-300">
+                    Sign In
+                </button>
+                <div
+                    class="absolute top-full left-0 hidden group-hover:block bg-white border rounded shadow-lg z-50 min-w-[8rem]">
+                    <button onclick="openSigninModal()" class="block w-full text-left px-4 py-2 hover:bg-gray-100">
+                        Student
+                    </button>
+                    <button onclick="location.href='{% url 'admin_login' %}'"
+                        class="block w-full text-left px-4 py-2 hover:bg-gray-100">
+                        Admin
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sign Up -->
+            <button id="openSignupModal"
+                class="bg-yellow-400 px-6 py-2 rounded-full hover:bg-yellow-500 hover:text-gray-800 transition duration-300">
+                Sign Up
+            </button>
+            {% endif %}
+        </div>
+
+
+
+
+        <!-- Mobile Menu Button -->
+        <button id="mobile-menu-btn" class="md:hidden focus:outline-none">
+            <svg class="w-7 h-7 text-[#4C7397]" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu"
+        class="md:hidden flex flex-col items-left space-y-4 py-4 mt-4 transition-all duration-300 opacity-0 max-h-0 overflow-hidden">
+        <a class="transition duration-300 cursor-pointer">Home</a>
+        <a class="transition duration-300 cursor-pointer">About Us</a>
+        <a class="transition duration-300 cursor-pointer">Contact Us</a>
+        <a class="transition duration-300 cursor-pointer">Shop</a>
+
+        <!-- Clickable Dropdown for Mobile -->
+        <div class="relative">
+            <div id="mobile-dropdown-btn"
+                class="text-[#2D3748] flex items-center space-x-1 cursor-pointer hover:text-[#3A5A80] transition duration-300">
+                <span>Courses</span>
+                <svg id="mobile-arrow" class="w-4 h-4 transition-transform duration-300" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </div>
+
+            <ul id="mobile-dropdown" class="mt-2 bg-white shadow-lg rounded-lg py-2 w-48 text-gray-800 z-50 hidden">
+                <li class="px-4 py-2 hover:bg-gray-100 transition duration-200">Math</li>
+                <li class="px-4 py-2 hover:bg-gray-100 transition duration-200">Public Speaking</li>
+                <li class="px-4 py-2 hover:bg-gray-100 transition duration-200">ELA</li>
+                <li class="px-4 py-2 hover:bg-gray-100 transition duration-200">Personalized Course</li>
+            </ul>
+        </div>
+
+        <button id="openSigninModal"
+            class="bg-button-primary text-gray-800 hover:text-yellow-400 px-6 py-2 rounded-full transition duration-300"
+            onclick="openSigninModal()">
+            Sign In
+        </button>
+
+        <button id="openSigninModal"
+            class="bg-button-primary text-gray-800 hover:text-yellow-400 px-6 py-2 rounded-full transition duration-300"
+            onclick="openSigninModal()">
+            Sign In
+        </button>
+
+    </div>
+</nav>
+
+
+<!-- Modal -->
+<div id="signupModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden transform transition-all">
+        <div class="p-5 border border-b">
+            <div class="flex justify-between items-center">
+                <h5 class="text-xl font-bold">Student Sign Up</h5>
+                <button id="closeSignupModal"
+                    class="p-1 border rounded-full bg-red-50 border-red-100 text-red-300 hover:bg-red-100 hover:border-red-300 text-xl font-bold transition duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div class="p-6 overflow-y-auto max-h-[90vh]">
+            <form id="signupForm" class="space-y-4" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <!-- Profile Picture Section -->
+                <div class="text-center">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Student Profile Picture</label>
+                    <div class="relative inline-block">
+                        <div id="profilePreview"
+                            class="w-24 h-24 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50 overflow-hidden">
+                            <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            </svg>
+                        </div>
+                        <input type="file" id="profilePicture" name="profile_picture" accept="image/*" class="hidden">
+                        <label for="profilePicture"
+                            class="absolute bottom-0 right-0 bg-blue-600 text-white p-1 rounded-full cursor-pointer hover:bg-blue-700 transition">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z">
+                                </path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                        </label>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">Click the camera icon to upload</p>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Parent Name</label>
+                    <input type="text" name="parent_name"
+                        class="w-full border border-gray-300 px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                        placeholder="Enter parent's full name" required>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Student Name</label>
+                    <input type="text" name="student_name"
+                        class="w-full border border-gray-300 px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                        placeholder="Enter student's full name" required>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Select Grade</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <label
+                            class="flex items-center space-x-2 p-2 border rounded-lg hover:bg-blue-50 cursor-pointer transition">
+                            <input type="radio" name="grade" value="Grade 1" class="text-blue-600" required>
+                            <span>Grade 1</span>
+                        </label>
+                        <label
+                            class="flex items-center space-x-2 p-2 border rounded-lg hover:bg-blue-50 cursor-pointer transition">
+                            <input type="radio" name="grade" value="Grade 2" class="text-blue-600" required>
+                            <span>Grade 2</span>
+                        </label>
+                        <label
+                            class="flex items-center space-x-2 p-2 border rounded-lg hover:bg-blue-50 cursor-pointer transition">
+                            <input type="radio" name="grade" value="Grade 3" class="text-blue-600" required>
+                            <span>Grade 3</span>
+                        </label>
+                        <label
+                            class="flex items-center space-x-2 p-2 border rounded-lg hover:bg-blue-50 cursor-pointer transition">
+                            <input type="radio" name="grade" value="Grade 4" class="text-blue-600" required>
+                            <span>Grade 4</span>
+                        </label>
+                        <label
+                            class="flex items-center space-x-2 p-2 border rounded-lg hover:bg-blue-50 cursor-pointer transition">
+                            <input type="radio" name="grade" value="Grade 5" class="text-blue-600" required>
+                            <span>Grade 5</span>
+                        </label>
+                        <label
+                            class="flex items-center space-x-2 p-2 border rounded-lg hover:bg-blue-50 cursor-pointer transition">
+                            <input type="radio" name="grade" value="Grade 6" class="text-blue-600" required>
+                            <span>Grade 6</span>
+                        </label>
+                        <label
+                            class="flex items-center space-x-2 p-2 border rounded-lg hover:bg-blue-50 cursor-pointer transition">
+                            <input type="radio" name="grade" value="Grade 7" class="text-blue-600" required>
+                            <span>Grade 7</span>
+                        </label>
+                        <label
+                            class="flex items-center space-x-2 p-2 border rounded-lg hover:bg-blue-50 cursor-pointer transition">
+                            <input type="radio" name="grade" value="Grade 8" class="text-blue-600" required>
+                            <span>Grade 8</span>
+                        </label>
+                        <label
+                            class="flex items-center space-x-2 p-2 border rounded-lg hover:bg-blue-50 cursor-pointer transition">
+                            <input type="radio" name="grade" value="Grade 9" class="text-blue-600" required>
+                            <span>Grade 9</span>
+                        </label>
+                        <label
+                            class="flex items-center space-x-2 p-2 border rounded-lg hover:bg-blue-50 cursor-pointer transition">
+                            <input type="radio" name="grade" value="Grade 10" class="text-blue-600" required>
+                            <span>Grade 10</span>
+                        </label>
+                        <label
+                            class="flex items-center space-x-2 p-2 border rounded-lg hover:bg-blue-50 cursor-pointer transition">
+                            <input type="radio" name="grade" value="Grade 11" class="text-blue-600" required>
+                            <span>Grade 11</span>
+                        </label>
+                        <label
+                            class="flex items-center space-x-2 p-2 border rounded-lg hover:bg-blue-50 cursor-pointer transition">
+                            <input type="radio" name="grade" value="Grade 12" class="text-blue-600" required>
+                            <span>Grade 12</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input type="email" name="email"
+                        class="w-full border border-gray-300 px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                        placeholder="Enter your email address" required>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <input type="password" name="password"
+                        class="w-full border border-gray-300 px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                        placeholder="Create a password" required>
+                </div>
+
+                <div id="otpSection" class="hidden space-y-3">
+                    <label class="block text-sm font-medium text-gray-700">OTP Verification</label>
+                    <p class="text-sm text-gray-500">Enter the 4-digit code sent to your email</p>
+
+                    <div class="flex justify-center gap-3">
+                        <input type="text" name="otp1"
+                            class="w-12 h-12 text-center text-xl font-bold border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            maxlength="1" inputmode="numeric" pattern="[0-9]" required>
+                        <input type="text" name="otp2"
+                            class="w-12 h-12 text-center text-xl font-bold border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            maxlength="1" inputmode="numeric" pattern="[0-9]" required>
+                        <input type="text" name="otp3"
+                            class="w-12 h-12 text-center text-xl font-bold border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            maxlength="1" inputmode="numeric" pattern="[0-9]" required>
+                        <input type="text" name="otp4"
+                            class="w-12 h-12 text-center text-xl font-bold border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            maxlength="1" inputmode="numeric" pattern="[0-9]" required>
+                    </div>
+
+                    <button type="button"
+                        class="w-full bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
+                        id="confirmOtpBtn">
+                        <span>Verify & Complete Registration</span>
+                    </button>
+
+                    <p class="text-center text-sm">
+                        <a href="#" class="text-blue-600 hover:text-blue-800">Didn't receive code? Resend</a>
+                    </p>
+                </div>
+
+                <button type="button"
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex justify-center items-center"
+                    id="signupBtn">
+                    <span>Send Verification Code</span>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Sign In Modal -->
+<div id="signinModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 hidden">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4 overflow-hidden transform transition-all">
+        <div class="p-5 border-b">
+            <div class="flex justify-between items-center">
+                <h5 class="text-xl font-bold">Student Sign In</h5>
+                <button id="closeSigninModal" onclick="closeSigninModal()"
+                    class="p-1 border rounded-full bg-red-50 border-red-100 text-red-300 hover:bg-red-100 hover:border-red-300 text-xl font-bold transition duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div class="px-6 pb-6">
+            <div id="signinErrorMsg" class="text-red-600 text-sm mb-4 hidden"></div>
+            <form id="signinForm" class="space-y-5">
+                {% csrf_token %}
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input type="email" name="email"
+                        class="w-full border border-gray-300 px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                        placeholder="Enter your email address" required>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <input type="password" name="password"
+                        class="w-full border border-gray-300 px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                        placeholder="Enter your password" required>
+                </div>
+
+                <button type="submit"
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200">
+                    Sign In
+                </button>
+
+                <p class="text-center text-sm mt-4">
+                    Don't have an account?
+                    <a href="#" id="openSignupFromSignin" class="text-blue-600 hover:underline">Create One</a>
+                </p>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- JavaScript for Click Dropdown Behavior -->
+<script>
+    function openSigninModal() {
+        const signinModal = document.getElementById("signinModal");
+        const errorDiv = document.getElementById("signinErrorMsg");
+
+        signinModal.classList.remove('hidden');
+        document.querySelector('#signinForm input[name="email"]').value = '';
+        document.querySelector('#signinForm input[name="password"]').value = '';
+
+        // Hide error message
+        errorDiv.textContent = '';
+        errorDiv.classList.add("hidden");
+    }
+
+    function closeSigninModal() {
+        const signinModal = document.getElementById("signinModal");
+
+        signinModal.classList.add('hidden');
+    }
+
+    document.getElementById("signinForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+        const errorDiv = document.getElementById("signinErrorMsg");
+
+        fetch("{% url 'signin' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": formData.get('csrfmiddlewaretoken'),
+            },
+            body: formData,
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    window.location.href = "{% url 'dashboard' %}";
+                } else {
+                    errorDiv.textContent = data.message;
+                    errorDiv.classList.remove("hidden");
+                }
+            })
+            .catch(() => {
+                errorDiv.textContent = "Something went wrong. Please try again.";
+                errorDiv.classList.remove("hidden");
+            });
+    });
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const desktopDropdownBtn = document.getElementById("desktop-dropdown-btn");
+        const desktopDropdown = document.getElementById("desktop-dropdown");
+        const desktopArrow = document.getElementById("desktop-arrow");
+
+        const mobileDropdownBtn = document.getElementById("mobile-dropdown-btn");
+        const mobileDropdown = document.getElementById("mobile-dropdown");
+        const mobileArrow = document.getElementById("mobile-arrow");
+
+        // Toggle Desktop Dropdown and Rotate Arrow
+        desktopDropdownBtn.addEventListener("click", function (event) {
+            event.stopPropagation();
+            const isActive = desktopDropdown.classList.contains("opacity-100");
+
+            desktopDropdown.classList.toggle("opacity-100", !isActive);
+            desktopDropdown.classList.toggle("visible", !isActive);
+            desktopDropdown.classList.toggle("opacity-0", isActive);
+            desktopDropdown.classList.toggle("invisible", isActive);
+
+            // Rotate arrow
+            desktopArrow.classList.toggle("rotate-180", !isActive);
+        });
+
+        // Toggle Mobile Dropdown and Rotate Arrow
+        mobileDropdownBtn.addEventListener("click", function (event) {
+            event.stopPropagation();
+            const isActive = mobileDropdown.style.display === "block";
+
+            mobileDropdown.style.display = isActive ? "none" : "block";
+
+            // Rotate arrow
+            mobileArrow.classList.toggle("rotate-180", !isActive);
+        });
+
+        // Close dropdowns when clicking outside
+        document.addEventListener("click", function () {
+            desktopDropdown.classList.remove("opacity-100", "visible");
+            desktopDropdown.classList.add("opacity-0", "invisible");
+            desktopArrow.classList.remove("rotate-180");
+
+            mobileDropdown.style.display = "none";
+            mobileArrow.classList.remove("rotate-180");
+        });
+
+        // Prevent dropdowns from closing when clicking inside
+        desktopDropdown.addEventListener("click", function (event) {
+            event.stopPropagation();
+        });
+
+        mobileDropdown.addEventListener("click", function (event) {
+            event.stopPropagation();
+        });
+
+
+        const openModalBtn = document.getElementById('openSignupModal');
+        const closeModalBtn = document.getElementById('closeSignupModal');
+        const modal = document.getElementById('signupModal');
+        const otpInputs = document.querySelectorAll('[name^="otp"]');
+        const signupBtn = document.getElementById('signupBtn');
+        const confirmOtpBtn = document.getElementById('confirmOtpBtn');
+
+        // Modal open/close functionality
+        if (openModalBtn) {
+            openModalBtn.addEventListener('click', () => {
+                modal.classList.remove('hidden');
+            });
+        }
+
+        if (closeModalBtn) {
+            closeModalBtn.addEventListener('click', () => {
+                modal.classList.add('hidden');
+            });
+        }
+
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.add('hidden');
+            }
+        });
+
+        // OTP input auto-focus functionality
+        otpInputs.forEach((input, index) => {
+            input.addEventListener('input', (e) => {
+                // Move to next input if current one is filled
+                if (e.target.value.length === 1 && index < otpInputs.length - 1) {
+                    otpInputs[index + 1].focus();
+                }
+            });
+
+            input.addEventListener('keydown', (e) => {
+                // Handle backspace - move focus to previous input
+                if (e.key === 'Backspace' && index > 0 && input.value.length === 0) {
+                    otpInputs[index - 1].focus();
+                }
+            });
+        });
+
+        // Highlight the selected grade
+        const gradeLabels = document.querySelectorAll('input[name="grade"]');
+        gradeLabels.forEach(radio => {
+            radio.addEventListener('change', () => {
+                document.querySelectorAll('input[name="grade"]').forEach(r => {
+                    r.closest('label').classList.remove('bg-blue-50', 'border-blue-500');
+                });
+
+                if (radio.checked) {
+                    radio.closest('label').classList.add('bg-blue-50', 'border-blue-500');
+                }
+            });
+        });
+
+        // Helper function to set button loading state
+        function setButtonLoading(button, isLoading, text = null) {
+            if (isLoading) {
+                const originalText = button.querySelector('span').textContent;
+                button.disabled = true;
+                button.classList.add('opacity-75', 'cursor-not-allowed');
+                button.querySelector('span').innerHTML = `
+            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Sending...
+        `;
+                // Store original text for later recovery
+                button.dataset.originalText = originalText;
+            } else {
+                button.disabled = false;
+                button.classList.remove('opacity-75', 'cursor-not-allowed');
+                button.querySelector('span').textContent = text || button.dataset.originalText;
+            }
+        }
+
+
+        const profilePictureInput = document.getElementById('profilePicture');
+        const profilePreview = document.getElementById('profilePreview');
+
+        profilePictureInput.addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('File size must be less than 5MB');
+                    this.value = '';
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    profilePreview.innerHTML = `<img src="${e.target.result}" alt="Profile Preview" class="w-full h-full object-cover rounded-full">`;
+                };
+                reader.readAsDataURL(file);
+            } else if (file) {
+                alert('Please select a valid image file');
+                this.value = '';
+            }
+        });
+
+        if (signupBtn) {
+            signupBtn.addEventListener('click', function () {
+                const form = document.getElementById('signupForm');
+                const requiredFields = form.querySelectorAll('input[required]:not([name^="otp"])');
+                let isValid = true;
+
+                requiredFields.forEach(field => {
+                    if (!field.value.trim()) {
+                        field.classList.add('border-red-500');
+                        isValid = false;
+                    } else {
+                        field.classList.remove('border-red-500');
+                    }
+                });
+
+                if (!isValid) {
+                    alert('Please fill all required fields');
+                    return;
+                }
+
+                setButtonLoading(signupBtn, true);
+
+                const formData = new FormData(form);
+
+                const profilePic = form.querySelector('input[type="file"][name="profile_picture"]');
+                fetch('{% url "send_signup_otp" %}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': form.querySelector('input[name="csrfmiddlewaretoken"]').value,
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    body: formData
+                })
+                    .then(response => response.json())
+                    .then(res => {
+                        if (res.status === 'otp_sent') {
+                            document.getElementById('otpSection').classList.remove('hidden');
+                            signupBtn.classList.add('hidden');
+                            document.querySelector('[name="otp1"]').focus();
+                        } else {
+                            setButtonLoading(signupBtn, false);
+
+                            let messages = [];
+                            for (const [field, errors] of Object.entries(res.errors)) {
+                                messages.push(`${errors.join(', ')}`);
+                            }
+
+                            alert(messages.join('\n'));
+                        }
+                    })
+                    .catch(error => {
+                        setButtonLoading(signupBtn, false);
+                        alert('An error occurred. Please try again.');
+                        console.error('Error:', error);
+                    });
+            });
+        } else {
+            console.error("Signup button not found in the DOM");
+        }
+
+        if (confirmOtpBtn) {
+            confirmOtpBtn.addEventListener('click', function () {
+                const otp = Array.from(otpInputs).map(input => input.value).join('');
+                if (otp.length !== 4) {
+                    return;
+                }
+
+                setButtonLoading(confirmOtpBtn, true, 'Verifying...');
+
+                const form = document.getElementById('signupForm');
+                const csrfToken = form.querySelector('input[name="csrfmiddlewaretoken"]').value;
+                const profilePicInput = form.querySelector('input[type="file"][name="profile_picture"]');
+
+                const otpFormData = new FormData(form);
+                otpFormData.append('otp', otp);
+
+                fetch('{% url "confirm_otp_and_register" %}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                    },
+                    body: otpFormData
+                })
+                    .then(response => response.json())
+                    .then(res => {
+                        if (res.status === 'success') {
+                            modal.innerHTML = `
+                <div class="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4 p-6 text-center">
+                    <div class="rounded-full bg-green-100 w-20 h-20 flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">Registration Successful!</h2>
+                    <p class="text-gray-600 mb-6">Your account has been created successfully.</p>
+                    <button type="button" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-3 rounded-lg" onclick="document.getElementById('signupModal').classList.add('hidden'); document.getElementById('signinModal').classList.remove('hidden');">
+                        Continue to Login
+                    </button>
+                </div>
+            `;
+                        } else {
+                            setButtonLoading(confirmOtpBtn, false, 'Verify & Complete Registration');
+                            alert("Invalid OTP. Please try again.");
+                        }
+                    })
+                    .catch(error => {
+                        setButtonLoading(confirmOtpBtn, false, 'Verify & Complete Registration');
+                        alert('An error occurred. Please try again.');
+                        console.error('Error:', error);
+                    });
+            });
+        } else {
+            console.error("Confirm OTP button not found in the DOM");
+        }
+
+        const resendLink = document.querySelector('#otpSection a');
+        if (resendLink) {
+            resendLink.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                this.textContent = 'Resending...';
+                this.classList.add('opacity-50');
+
+                const form = document.getElementById('signupForm');
+                const formData = new FormData(form);
+
+                fetch('{% url "send_signup_otp" %}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': form.querySelector('input[name="csrfmiddlewaretoken"]').value,
+                    },
+                    body: formData
+                })
+                    .then(response => response.json())
+                    .then(res => {
+                        if (res.status === 'otp_sent') {
+                            // Clear OTP fields
+                            otpInputs.forEach(input => input.value = '');
+                            // Focus on first OTP input
+                            otpInputs[0].focus();
+
+                            this.textContent = 'Code resent! Try again';
+                            setTimeout(() => {
+                                this.textContent = 'Didn\'t receive code? Resend';
+                                this.classList.remove('opacity-50');
+                            }, 3000);
+                        } else {
+                            this.textContent = 'Didn\'t receive code? Resend';
+                            this.classList.remove('opacity-50');
+                            alert(JSON.stringify(res.errors));
+                        }
+                    })
+                    .catch(error => {
+                        this.textContent = 'Didn\'t receive code? Resend';
+                        this.classList.remove('opacity-50');
+                        alert('An error occurred. Please try again.');
+                        console.error('Error:', error);
+                    });
+            });
+        }
+
+
+    });
+
+</script>

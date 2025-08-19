@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Not Found - 404 Error</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .bg-gradient-404 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .error-illustration {
+            max-width: 400px;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 font-sans">
+    <div class="min-h-screen flex flex-col items-center justify-center p-4">
+        <div class="w-full max-w-4xl bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="md:flex">
+                <div class="bg-gradient-404 p-8 md:w-1/2 flex items-center justify-center">
+                    <img src="https://cdn-icons-png.flaticon.com/512/755/755014.png" alt="404 Illustration"
+                        class="error-illustration">
+                </div>
+                <div class="p-8 md:w-1/2">
+                    <h1 class="text-5xl font-bold text-gray-800 mb-2">404</h1>
+                    <h2 class="text-2xl font-semibold text-gray-700 mb-4">Page Not Found</h2>
+                    <p class="text-gray-600 mb-6">
+                        Oops! The page you're looking for doesn't exist or has been moved.
+                        Please check the URL or try one of these helpful links:
+                    </p>
+
+                    <div class="space-y-3 mb-8">
+                        <a href="/"
+                            class="block w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-200 text-center">
+                            Home Page
+                        </a>
+                        <a href="/courses"
+                            class="block w-full px-4 py-2 border border-blue-500 text-blue-500 rounded-lg hover:bg-blue-50 transition duration-200 text-center">
+                            Our Courses
+                        </a>
+                        <a href="/contact"
+                            class="block w-full px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition duration-200 text-center">
+                            Contact Support
+                        </a>
+                    </div>
+
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <h3 class="font-medium text-blue-800 mb-2">Need help?</h3>
+                        <p class="text-sm text-blue-700">
+                            If you believe this is an error, please contact our support team at
+                            <a href="mailto:support@yourdomain.com" class="underline">support@yourdomain.com</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

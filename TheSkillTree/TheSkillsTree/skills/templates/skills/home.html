@@ -1,0 +1,48 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>The Skills Tree</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    {% tailwind_css %}
+</head>
+
+<body class="bg-white leading-normal tracking-normal">
+
+    {% include 'skills/navbar.html' %}
+
+    {% include 'skills/HomePage/heroHome.html' %}
+
+    {% include 'skills/HomePage/contentSection.html' %}
+
+    {% include 'skills/HomePage/aboutSection.html' %}
+
+    {% include 'skills/HomePage/courses.html' %}
+    
+    {% include 'skills/HomePage/scoresat.html' %}
+    {% include 'skills/HomePage/chooseUs.html' %}
+
+    {% include 'skills/HomePage/steps.html' %}
+    {% include 'skills/HomePage/favouriteCourse.html' %}
+
+    {% include 'skills/HomePage/teachers.html' %}
+
+    {% include 'skills/HomePage/reviews.html' %}
+
+    {% include 'skills/HomePage/groupStudy.html' %}
+
+    {% comment %} {% include 'skills/HomePage/parents.html' %} {% endcomment %}
+
+    {% include 'skills/HomePage/logo_carasouel.html' %}
+
+    {% include 'skills/footer.html' %}
+
+
+
+
+</body>
+
+</html>

@@ -1,0 +1,96 @@
+{% load static tailwind_tags bootstrap_icons %}
+
+<section class="bg-primary py-16 bg-blue-600 text-white text-center border-0">
+    <div class="container mx-auto px-6 max-w-7xl">
+        <!-- Heading -->
+        <h2 class="text-4xl font-extrabold mb-6 flex items-center justify-center gap-2 text-white">
+            Our Programs
+        </h2>
+        <p class="text-lg mb-12 max-w-2xl mx-auto text-white">
+           
+        </p>
+
+        <!-- 3 Column Layout -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+            <!-- Column 1 -->
+            <div class="bg-white rounded-lg shadow-sm p-6 space-y-6 hover:shadow-md transition-all text-gray-800">
+                <div class="flex items-start gap-3">
+                    {% bs_icon 'check-circle-fill' size='24px' extra_classes="text-gray-600 mt-1" %}
+                    <strong>Math Mastery (Grades 1-10)</strong>
+                </div>
+                <div class="flex items-start gap-3">
+                    {% bs_icon 'check-circle-fill' size='24px' extra_classes="text-gray-600 mt-1" %}
+                    <strong>Conceptual learning & problem-solving strategies</strong>
+                </div>
+                <div class="flex items-start gap-3">
+                    {% bs_icon 'check-circle-fill' size='24px' extra_classes="text-gray-600 mt-1" %}
+                    <strong>SAT Math Prep & Math Kangaroo Training</strong>
+                </div>
+            </div>
+
+            <!-- Column 2 -->
+            <div class="bg-white rounded-lg shadow-sm p-6 space-y-6 hover:shadow-md transition-all text-gray-800">
+                <div class="flex items-start gap-3">
+                    {% bs_icon 'camera-video-fill' size='24px' extra_classes="text-gray-600 mt-1" %}
+                    <strong>ELA Excellence (Grades 1-10)</strong>
+                </div>
+                <div class="flex items-start gap-3">
+                    {% bs_icon 'check-circle-fill' size='24px' extra_classes="text-gray-600 mt-1" %}
+                    <strong>Reading comprehension, grammar, and creative writing</strong>
+                </div>
+                <div class="flex items-start gap-3">
+                    {% bs_icon 'check-circle-fill' size='24px' extra_classes="text-gray-600 mt-1" %}
+                    <strong>Personalized support for spelling, vocabulary & literature</strong>
+                </div>
+            </div>
+
+            <!-- Column 3 -->
+            <div class="bg-white rounded-lg shadow-sm p-6 space-y-6 hover:shadow-md transition-all text-gray-800">
+                <div class="flex items-start gap-3">
+                    {% bs_icon 'graph-up-arrow' size='24px' extra_classes="text-gray-600 mt-1" %}
+                    <strong>Public Speaking & Communication</strong>
+                </div>
+                <div class="flex items-start gap-3">
+                    {% bs_icon 'check-circle-fill' size='24px' extra_classes="text-gray-600 mt-1" %}
+                    <strong>Building confidence through structured speech training</strong>
+                </div>
+                <div class="flex items-start gap-3">
+                    {% bs_icon 'check-circle-fill' size='24px' extra_classes="text-gray-600 mt-1" %}
+                    <strong>Preparing for debates, TEDx-style presentations, and leadership roles</strong>
+                </div>
+            </div>
+
+            <!-- Column 4 -->
+            <div class="bg-white rounded-lg shadow-sm p-6 space-y-6 hover:shadow-md transition-all text-gray-800">
+                <div class="flex items-start gap-3">
+                    {% bs_icon 'graph-up-arrow' size='24px' extra_classes="text-gray-600 mt-1" %}
+                    <strong>Leadership & Coaching</strong>
+                </div>
+                <div class="flex items-start gap-3">
+                    {% bs_icon 'check-circle-fill' size='24px' extra_classes="text-gray-600 mt-1" %}
+                    <strong>Building leadership and coaching skills</strong>
+                </div>
+                <div class="flex items-start gap-3">
+                    {% bs_icon 'award-fill' size='24px' extra_classes="text-gray-600 mt-1" %}
+                    <strong>Mentorship for leadership roles and team management</strong>
+                </div>
+            </div>
+
+            <!-- Column 5 -->
+            <div class="bg-white rounded-lg shadow-sm p-6 space-y-6 hover:shadow-md transition-all text-gray-800">
+                <div class="flex items-start gap-3">
+                    {% bs_icon 'graph-up-arrow' size='24px' extra_classes="text-gray-600 mt-1" %}
+                    <strong>Personalized Course</strong>
+                </div>
+                <div class="flex items-start gap-3">
+                    {% bs_icon 'award-fill' size='24px' extra_classes="text-gray-600 mt-1" %}
+                    <strong>Customize your learning journey to fit your goals</strong>
+                </div>
+                <div class="flex items-start gap-3">
+                    {% bs_icon 'award-fill' size='24px' extra_classes="text-gray-600 mt-1" %}
+                    <strong>No need to pay for the entire course—just what you need!</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

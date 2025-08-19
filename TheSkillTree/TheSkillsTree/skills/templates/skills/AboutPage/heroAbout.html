@@ -1,0 +1,94 @@
+{% load static tailwind_tags %}
+
+<style>
+    @keyframes fadeInUpRight {
+        0% {
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .fade-in-up-main {
+        opacity: 0;
+        transform: translateY(50px);
+        transition: all 0.8s ease-out;
+    }
+
+    .fade-in-up-main.visible {
+        animation: fadeInUpRight 0.8s ease-out forwards;
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const animated = document.querySelector(".fade-in-up-main");
+
+        const observer = new IntersectionObserver(
+            entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("visible");
+                        observer.unobserve(entry.target);
+                    }
+                });
+            },
+            {
+                threshold: 0.3,
+            }
+        );
+
+        if (animated) {
+            observer.observe(animated);
+        }
+    });
+</script>
+
+<section class="relative py-16 sm:py-24 overflow-hidden">
+    <div class="container mx-auto flex flex-col lg:flex-row items-center px-6 text-gray-800">
+
+        <!-- Content -->
+        <div class="lg:w-[60%] text-center lg:text-left mt-12 lg:mt-0">
+            <p class="text-blue-600 font-semibold text-lg sm:text-xl">
+                About Us
+            </p>
+            <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold sm:mt-4" style="line-height: 1.2;">
+                Empowering Young Minds
+                <span class="text-blue-600">with Personalized Learning</span>
+            </h1>
+
+            <!-- Supporting Paragraph -->
+            <p class="text-gray-600 mt-4 text-base sm:text-lg">
+                At <span class="text-blue-600">The Skills’ Tree,</span>we believe that <span class="text-blue-600">every child learns differently,</span>
+                and education should adapt to their needs—not the other way around. As a leading <span class="text-blue-600">EdTech company,</span> we provide
+                <span class="text-blue-600">Math, English Language Arts (ELA), and Public Speaking</span> courses for <span class="text-blue-600">Grades 1-10,</span>
+                along with <span class="text-blue-600">SAT Prep and Math Kangaroo training</span> to help students excel in competitive exams.
+
+            </p>
+
+
+            <h4 class="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold sm:mt-4" style="line-height: 1.2;">
+                Our mission?
+                <span class="text-blue-600">To make high-quality education accessible, flexible, and personalized—</span>
+                because every learner deserves the best opportunities to succeed.
+            </h4>
+
+           
+
+            
+        </div>
+
+
+
+        <!-- Image with scroll-triggered animation -->
+        <div class="lg:w-1/2 mt-12 lg:mt-0 relative flex justify-center h-[580px]">
+            <img src="{% static 'img/CoursesPage/math/hero.jpg' %}" alt=""
+                class="fade-in-up-main object-cover object-[40%_20%] w-[80%] h-full rounded-xl drop-shadow-xl" />
+
+        </div>
+    </div>
+</section>

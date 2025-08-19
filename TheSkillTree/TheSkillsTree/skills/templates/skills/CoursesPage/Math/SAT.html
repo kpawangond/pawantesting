@@ -1,0 +1,150 @@
+{% load static tailwind_tags %}
+
+<style>
+    @keyframes fadeInUpRight {
+        0% {
+            opacity: 0;
+            transform: translateY(50px) translateX(-50px);
+        }
+
+        100% {
+            opacity: 1;
+            transform: translateY(0) translateX(0);
+        }
+    }
+
+    .fade-in-up3 {
+        opacity: 0;
+        transform: translateY(50px) translateX(-50px);
+        transition: all 0.8s ease-out;
+    }
+
+    .fade-in-up3.visible {
+        animation: fadeInUpRight 0.8s ease-out forwards;
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const animated = document.querySelector(".fade-in-up3");
+
+        const observer = new IntersectionObserver(
+            entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("visible");
+                        observer.unobserve(entry.target);
+                    }
+                });
+            },
+            {
+                threshold: 0.3,
+            }
+        );
+
+        if (animated) {
+            observer.observe(animated);
+        }
+    });
+</script>
+
+<section class="py-16 sm:py-20">
+    <div class="container mx-auto flex flex-col lg:flex-row items-center px-6 text-gray-800">
+
+        <!-- Image with scroll-triggered animation -->
+        <div class="lg:w-1/2 mt-12 lg:mt-0 relative flex justify-center">
+            <img src="{% static 'img/CoursesPage/math/SAT.webp' %}" alt="About Rector"
+                class="fade-in-up3 w-[60%] sm:w-[70%] md:w-[80%] lg:w-[75%] object-cover mr-auto" />
+        </div>
+
+        <!-- Content -->
+        <div class="lg:w-1/2 text-center lg:text-left mt-12 lg:mt-0">
+            <p class="text-blue-600 font-semibold text-lg sm:text-xl">
+                SAT Math Prep
+            </p>
+            <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold sm:mt-4" style="line-height: 1.2;">
+                Boost Your SAT Score with Expert-Led<span class="text-blue-600"> Math Training!</span>
+            </h1>
+
+            <!-- Key Features -->
+            <ul class="mt-6 text-left space-y-4 text-gray-700 text-base sm:text-lg md:text-xl">
+                <li class="flex items-start">
+                    <span class="mr-3 text-xl">✔</span>
+                    <span>Proven Strategies: Master time management & problem-solving techniques</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="mr-3 text-xl">✔</span>
+                    <span>Real SAT Practice: Take timed tests & analyze question patterns</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="mr-3 text-xl">✔</span>
+                    <span>Score Maximization: Identify and improve weak areas efficiently</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="mr-3 text-xl">✔</span>
+                    <span>Expert Guidance: Learn from SAT specialists with years of experience</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="mr-3 text-xl">✔</span>
+                    <span>Confidence Building: Reduce test anxiety with structured preparation</span>
+                </li>
+            </ul>
+            <!-- Button -->
+            <div class="mt-6 flex sm:flex-row gap-4 items-center w-full sm:w-auto">
+                <button id="exploreMoreBtn"
+                    class="flex items-center gap-2 font-semibold bg-blue-600 px-6 py-3 rounded-full text-white hover:bg-blue-700 transition duration-300">
+                    Explore More
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+
+</section>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Get the explore more button and the modal
+        const exploreButton = document.getElementById("exploreMoreBtn");
+        const modal = document.getElementById("SATModal");
+        const closeButton = modal.querySelector(".close-grade-modal");
+
+        // Event listener for the explore more button to show the modal
+        if (exploreButton) {
+            exploreButton.addEventListener("click", function (event) {
+                event.preventDefault(); // Prevent default link behavior if it's a link
+                modal.classList.remove("hidden"); // Show the modal by removing 'hidden' class
+            });
+        }
+
+        // Event listener for the close button inside the modal
+        if (closeButton) {
+            closeButton.addEventListener("click", function () {
+                modal.classList.add("hidden"); // Hide the modal by adding 'hidden' class
+            });
+        }
+
+        // Intersection Observer for fade-in effect (unchanged)
+        const animated = document.querySelector(".fade-in-up3");
+
+        const observer = new IntersectionObserver(
+            entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("visible");
+                        observer.unobserve(entry.target);
+                    }
+                });
+            },
+            {
+                threshold: 0.3,
+            }
+        );
+
+        if (animated) {
+            observer.observe(animated);
+        }
+    });
+</script>

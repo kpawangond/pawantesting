@@ -1,0 +1,111 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Edit Study Material</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% tailwind_css %}
+</head>
+
+<body class="bg-gray-50 text-gray-800">
+
+    {% include 'skills/navbar.html' %}
+
+    <div class="container mx-auto p-8">
+        <div class="max-w-2xl mx-auto">
+            <h1 class="text-2xl font-bold mb-6">Edit Study Material</h1>
+
+            <form method="POST" class="bg-white shadow-md rounded-lg p-6 space-y-6">
+                {% csrf_token %}
+
+                <!-- Canva File Link -->
+                <div>
+                    <label class="block mb-2 font-semibold">Canva File Link</label>
+                    <input type="text" name="file_link" value="{{ material.file_link }}" required
+                        class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                </div>
+
+                <!-- Subject Dropdown -->
+                <div>
+                    <label class="block mb-2 font-semibold">Subject</label>
+                    <select name="subject" required
+                        class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">Select Subject</option>
+                        <option value="Maths" {% if material.subject=='Maths' %}selected{% endif %}>Maths</option>
+                        <option value="Public Speaking" {% if material.subject=='Public Speaking' %}selected{% endif %}>
+                            Public Speaking</option>
+                        <option value="ELA" {% if material.subject=='ELA' %}selected{% endif %}>ELA</option>
+                        <option value="Personalized Courses" {% if material.subject=='Personalized Courses' %}selected{%
+                            endif %}>Personalized Courses</option>
+                    </select>
+                </div>
+
+                <!-- Grades Checkbox -->
+                <div>
+                    <label class="block mb-2 font-semibold">Select Grades</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <label>
+                            <input type="checkbox" name="grades" value="1" class="mr-2" {% if 1 in grades_list
+                                %}checked{% endif %}> Grade 1
+                        </label>
+                        <label>
+                            <input type="checkbox" name="grades" value="2" class="mr-2" {% if 2 in grades_list
+                                %}checked{% endif %}> Grade 2
+                        </label>
+                        <label>
+                            <input type="checkbox" name="grades" value="3" class="mr-2" {% if 3 in grades_list
+                                %}checked{% endif %}> Grade 3
+                        </label>
+                        <label>
+                            <input type="checkbox" name="grades" value="4" class="mr-2" {% if 4 in grades_list
+                                %}checked{% endif %}> Grade 4
+                        </label>
+                        <label>
+                            <input type="checkbox" name="grades" value="5" class="mr-2" {% if 5 in grades_list
+                                %}checked{% endif %}> Grade 5
+                        </label>
+                        <label>
+                            <input type="checkbox" name="grades" value="6" class="mr-2" {% if 6 in grades_list
+                                %}checked{% endif %}> Grade 6
+                        </label>
+                        <label>
+                            <input type="checkbox" name="grades" value="7" class="mr-2" {% if 7 in grades_list
+                                %}checked{% endif %}> Grade 7
+                        </label>
+                        <label>
+                            <input type="checkbox" name="grades" value="8" class="mr-2" {% if 8 in grades_list
+                                %}checked{% endif %}> Grade 8
+                        </label>
+                        <label>
+                            <input type="checkbox" name="grades" value="9" class="mr-2" {% if 9 in grades_list
+                                %}checked{% endif %}> Grade 9
+                        </label>
+                        <label>
+                            <input type="checkbox" name="grades" value="10" class="mr-2" {% if 10 in grades_list
+                                %}checked{% endif %}> Grade 10
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="flex space-x-4">
+                    <button type="submit"
+                        class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                        Update
+                    </button>
+                    <a href="{% url 'admin_dashboard' %}"
+                        class="px-6 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% include 'skills/footer.html' %}
+
+</body>
+
+</html>

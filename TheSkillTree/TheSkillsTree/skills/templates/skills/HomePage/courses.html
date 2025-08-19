@@ -1,0 +1,69 @@
+{% load static tailwind_tags %}
+
+<section class="py-16 sm:py-20 bg-blue-50 relative">
+    <!-- Top-right corner image -->
+    <img src="https://wpocean.com/html/tf/eduko/assets/images/shape/vector-11.svg" alt="Decorative Shape"
+        class="absolute top-0 right-0 w-32 sm:w-40 lg:w-48 opacity-75">
+
+    <!-- Section Title -->
+    <p class="text-blue-600 font-semibold text-lg sm:text-xl text-center">
+        Our Courses
+    </p>
+    <div class="relative text-center">
+        <h1 class="text-gray-800 text-3xl sm:text-4xl lg:text-4xl font-bold leading-snug mt-4 sm:mt-6 relative">
+            Explore
+            <span class="relative inline-block">
+                <span class="relative z-10">Courses</span>
+                <img src="{% static 'img/Circle.webp' %}" alt=""
+                    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150%] h-[70px] z-0 rotate-[10deg]">
+            </span>
+            By Category
+        </h1>
+    </div>
+
+    <div class="container mx-auto mt-16 px-6">
+        <!-- Responsive Grid Layout -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div class="bg-white shadow-lg px-6 py-12 rounded-xl transition-transform duration-300 hover:scale-105">
+                <img src="{% static 'img/Mathematics.webp' %}" alt="Mathematics" class="h-20 mx-auto" />
+                <div class="mt-6 text-center">
+                    <h2 class="text-lg sm:text-xl font-semibold text-text">Math</h2>
+                    <p class="text-gray-600 mt-3 text-sm sm:text-base">
+                        Master academics and competitive math with expert guidance!
+                    </p>
+                </div>
+            </div>
+
+            <div class="bg-white shadow-lg px-6 py-12 rounded-xl transition-transform duration-300 hover:scale-105">
+                <img src="{% static 'img/PublicSpeaking.webp' %}" alt="Public Speaking" class="h-20 mx-auto" />
+                <div class="mt-6 text-center">
+                    <h2 class="text-lg sm:text-xl font-semibold text-text">Public Speaking</h2>
+                    <p class="text-gray-600 mt-3 text-sm sm:text-base">
+                        Build confidence and master the art of effective communication!
+                    </p>
+                </div>
+            </div>
+
+            <div class="bg-white shadow-lg px-6 py-12 rounded-xl transition-transform duration-300 hover:scale-105">
+                <img src="{% static 'img/ELA.webp' %}" alt="English Language Arts (ELA)" class="h-20 mx-auto" />
+                <div class="mt-6 text-center">
+                    <h2 class="text-lg sm:text-xl font-semibold text-text">English Language Arts (ELA)</h2>
+                    <p class="text-gray-600 mt-3 text-sm sm:text-base">
+                        Improve reading, writing, language, vocabulary, comprehension skills effectively.
+                    </p>
+                </div>
+            </div>
+
+            <div class="bg-white shadow-lg px-6 py-12 rounded-xl transition-transform duration-300 hover:scale-105">
+                <img src="{% static 'img/PersonalizedLearning.webp' %}" alt="Personalized Learning"
+                    class="h-20 mx-auto" />
+                <div class="mt-6 text-center">
+                    <h2 class="text-lg sm:text-xl font-semibold text-text">Personalised Course</h2>
+                    <p class="text-gray-600 mt-3 text-sm sm:text-base">
+                        Learn only the modules you need to master & customize the course to fit your needs!
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

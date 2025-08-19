@@ -1,0 +1,95 @@
+{% load static tailwind_tags %}
+
+<section class="py-16 sm:py-20 bg-blue-50 relative">
+    <!-- Top-right corner image -->
+    <img src="https://wpocean.com/html/tf/eduko/assets/images/shape/vector-11.svg" alt="Decorative Shape"
+        class="absolute top-0 right-0 w-32 sm:w-40 lg:w-48 opacity-75">
+
+    <!-- Section Title -->
+    <p class="text-blue-600 font-semibold text-lg sm:text-xl text-center">
+        Learners’ Favourites
+    </p>
+    <div class="relative text-center">
+        <h1 class="text-gray-800 text-3xl sm:text-4xl lg:text-4xl font-bold leading-snug mt-4 sm:mt-6 relative">
+            Our Top
+            <span class="relative inline-block">
+                <span class="relative z-10">Selling</span>
+                <img src="{% static 'img/Circle.webp' %}" alt=""
+                    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150%] h-[70px] z-0 rotate-[10deg]">
+            </span>
+            Courses
+        </h1>
+    </div>
+
+    <div class="container mx-auto mt-16 px-6">
+        <!-- Responsive Grid Layout -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 relative">
+            <!-- Step 1 -->
+            <div class="bg-white shadow-lg px-6 py-12 rounded-xl transition-transform duration-300 hover:scale-105">
+                <img src="{% static 'img/Step01.png' %}" alt="Select Course" class="w-[80%] mx-auto">
+                <div class="mt-6 text-center">
+                    <h2 class="text-lg sm:text-xl font-semibold text-gray-800">Select Course</h2>
+                    <p class="text-gray-600 mt-3 text-sm sm:text-base">
+                        Choose a course based on your child's need, or contact us for personalized learning plans.
+                    </p>
+                </div>
+            </div>
+    
+            <!-- Step 2 -->
+            <div class="bg-white shadow-lg px-6 py-12 rounded-xl transition-transform duration-300 hover:scale-105">
+                <img src="{% static 'img/Step02.png' %}" alt="Book a Free Trial" class="w-[80%] mx-auto">
+                <div class="mt-6 text-center">
+                    <h2 class="text-lg sm:text-xl font-semibold text-gray-800">Book a Free Trial</h2>
+                    <p class="text-gray-600 mt-3 text-sm sm:text-base">
+                        Simply select your preferred day and time slot, and fill in the student details.
+                    </p>
+                </div>
+            </div>
+    
+            <!-- Step 3 -->
+            <div class="bg-white shadow-lg px-6 py-12 rounded-xl transition-transform duration-300 hover:scale-105">
+                <img src="{% static 'img/Step03.png' %}" alt="Enroll for the Courses" class="w-[80%] mx-auto">
+                <div class="mt-6 text-center">
+                    <h2 class="text-lg sm:text-xl font-semibold text-gray-800">Enroll for the Courses</h2>
+                    <p class="text-gray-600 mt-3 text-sm sm:text-base">
+                        If you're satisfied with the demo class, kickstart your child's learning journey!
+                    </p>
+                </div>
+            </div>
+    
+            <!-- Step 4 -->
+            <div class="bg-white shadow-lg px-6 py-12 rounded-xl transition-transform duration-300 hover:scale-105">
+                <img src="{% static 'img/Step01.png' %}" alt="Start Learning" class="w-[80%] mx-auto">
+                <div class="mt-6 text-center">
+                    <h2 class="text-lg sm:text-xl font-semibold text-gray-800">Start Learning</h2>
+                    <p class="text-gray-600 mt-3 text-sm sm:text-base">
+                        Begin classes with our expert tutors and explore engaging, interactive lessons.
+                    </p>
+                </div>
+            </div>
+    
+            <!-- Step 5 -->
+            <div class="bg-white shadow-lg px-6 py-12 rounded-xl transition-transform duration-300 hover:scale-105">
+                <img src="{% static 'img/Step02.png' %}" alt="Track Progress" class="w-[80%] mx-auto">
+                <div class="mt-6 text-center">
+                    <h2 class="text-lg sm:text-xl font-semibold text-gray-800">Track Progress</h2>
+                    <p class="text-gray-600 mt-3 text-sm sm:text-base">
+                        Monitor your child’s performance and growth with regular feedback and reports.
+                    </p>
+                </div>
+            </div>
+    
+            <!-- Step 6 -->
+            <div class="bg-white shadow-lg px-6 py-12 rounded-xl transition-transform duration-300 hover:scale-105">
+                <img src="{% static 'img/Step03.png' %}" alt="Achieve Goals" class="w-[80%] mx-auto">
+                <div class="mt-6 text-center">
+                    <h2 class="text-lg sm:text-xl font-semibold text-gray-800">Achieve Goals</h2>
+                    <p class="text-gray-600 mt-3 text-sm sm:text-base">
+                        Celebrate milestones and let your child reach their full academic potential!
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</section>

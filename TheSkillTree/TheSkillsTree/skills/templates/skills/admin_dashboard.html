@@ -1,0 +1,1890 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Admin Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% tailwind_css %}
+    <!-- CKEditor CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ckeditor5/35.4.0/ckeditor.min.js"></script>
+    <style>
+        .ck-editor__editable {
+            min-height: 150px;
+        }
+
+        .question-card {
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background: #f9fafb;
+        }
+
+        .option-item {
+            border: 1px solid #d1d5db;
+            border-radius: 0.25rem;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            background: white;
+        }
+
+        .correct-option {
+            border-color: #10b981;
+            background-color: #ecfdf5;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 2% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 95%;
+            max-width: 1200px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .close-modal {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-modal:hover {
+            color: black;
+        }
+
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 2s linear infinite;
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .student-checkbox {
+            margin-right: 8px;
+        }
+
+        .test-stats {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 0.25rem;
+        }
+
+        .question-image,
+        .option-image {
+            max-width: 200px;
+            max-height: 150px;
+            object-fit: contain;
+            border-radius: 0.25rem;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800">
+
+    {% include 'skills/navbar.html' %}
+
+    <div class="flex h-screen border-t">
+        <!-- Sidebar -->
+        <nav class="w-64 bg-white border-r p-4 space-y-4">
+            <button onclick="showSection('students')"
+                class="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 font-medium"
+                id="tab-students">Students</button>
+            <!-- <button onclick="showSection('upload')"
+                class="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 font-medium" id="tab-upload">Upload Study
+                Material</button> -->
+            <button onclick="showSection('materials')"
+                class="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 font-medium" id="tab-materials">Study
+                Materials</button>
+            <button onclick="showSection('practice')"
+                class="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 font-medium" id="tab-practice">Practice
+                Tests</button>
+            <button onclick="showSection('teachers')"
+                class="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 font-medium"
+                id="tab-teachers">Teachers</button>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="flex-1 p-8 overflow-y-auto">
+            <!-- Students Section -->
+            <div id="section-students" class="section">
+                <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-4">
+                    <h2 class="text-2xl font-bold text-gray-800">Students</h2>
+                    <div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+                        <!-- Search Input -->
+                        <div class="relative flex-grow">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                            </div>
+                            <input type="text" id="studentSearch" placeholder="Search students..."
+                                class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg shadow-md overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-blue-600">
+                            <tr>
+                                <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">S.No
+                                </th>
+                                <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">Parent
+                                    Name</th>
+                                <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">Student
+                                    Name</th>
+                                <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">Grade
+                                </th>
+                                <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">Email
+                                </th>
+                                <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">Action
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for student in students %}
+                            <tr class="hover:bg-gray-50 transition-colors duration-150 text-center student-row"
+                                data-parent="{{ student.parent_name|lower }}"
+                                data-student="{{ student.student_name|lower }}" data-grade="{{ student.grade|lower }}"
+                                data-email="{{ student.email|lower }}">
+                                <td class="py-4 text-gray-500">{{ forloop.counter }}</td>
+                                <td class="py-4 whitespace-nowrap text-sm text-gray-900">{{ student.parent_name }}
+                                </td>
+                                <td class="py-4 whitespace-nowrap text-sm text-gray-900">{{ student.student_name }}
+                                </td>
+                                <td class="py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <span
+                                        class="inline-block px-3 py-1 text-sm font-medium bg-blue-100 text-blue-800 rounded-md">
+                                        {{ student.grade }}
+                                    </span>
+                                </td>
+                                <td class="py-4 whitespace-nowrap text-sm text-gray-500">{{ student.email }}</td>
+                                <td class="py-4 whitespace-nowrap text-sm text-indigo-600">
+                                    <a href="{% url 'student_detail' student.id %}"
+                                        class="hover:underline flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                        View
+                                    </a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500">No students found.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Upload Study Material Section -->
+            <!-- <div id="section-upload" class="section hidden">
+                <h2 class="text-2xl font-bold mb-4">Upload Study Material</h2>
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <form method="POST" action="{% url 'upload_study_material' %}" class="space-y-6">
+                        {% csrf_token %}
+                        <div>
+                            <label class="block mb-2 font-semibold">Canva File Link</label>
+                            <input type="text" name="file_link" required
+                                class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+
+                        <div>
+                            <label class="block mb-2 font-semibold">Subject</label>
+                            <select name="subject" required
+                                class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                <option value="">Select Subject</option>
+                                <option value="Maths">Maths</option>
+                                <option value="Public Speaking">Public Speaking</option>
+                                <option value="ELA">ELA</option>
+                                <option value="Personalized Courses">Personalized Courses</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block mb-2 font-semibold">Select Grades</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <label><input type="checkbox" name="grades" value="1" class="mr-2"> Grade 1</label>
+                                <label><input type="checkbox" name="grades" value="2" class="mr-2"> Grade 2</label>
+                                <label><input type="checkbox" name="grades" value="3" class="mr-2"> Grade 3</label>
+                                <label><input type="checkbox" name="grades" value="4" class="mr-2"> Grade 4</label>
+                                <label><input type="checkbox" name="grades" value="5" class="mr-2"> Grade 5</label>
+                                <label><input type="checkbox" name="grades" value="6" class="mr-2"> Grade 6</label>
+                                <label><input type="checkbox" name="grades" value="7" class="mr-2"> Grade 7</label>
+                                <label><input type="checkbox" name="grades" value="8" class="mr-2"> Grade 8</label>
+                                <label><input type="checkbox" name="grades" value="9" class="mr-2"> Grade 9</label>
+                                <label><input type="checkbox" name="grades" value="10" class="mr-2"> Grade 10</label>
+                            </div>
+                        </div>
+
+                        <div>
+                            <button type="submit"
+                                class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                                Upload
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div> -->
+
+            <!-- Study Materials Section -->
+            <div id="section-materials" class="section hidden">
+                <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-4">
+                    <h2 class="text-2xl font-bold text-gray-800">Study Materials</h2>
+                    <div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+                        <!-- Search Input -->
+                        <div class="relative flex-grow">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                            </div>
+                            <input type="text" id="materialSearch" placeholder="Search materials..."
+                                class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+
+                        <!-- Upload Button -->
+                        <button onclick="openUploadModal()"
+                            class="px-6 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition-all duration-300 flex items-center justify-center whitespace-nowrap">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 4v16m8-8H4" />
+                            </svg>
+                            Upload Study Material
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-blue-600">
+                            <tr>
+                                <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">S.No
+                                </th>
+                                <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">Subject
+                                </th>
+                                <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">Topics
+                                </th>
+                                <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">Sub
+                                    Topics
+                                </th>
+                                <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">Grades
+                                </th>
+                                <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">File
+                                    Link</th>
+                                <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">
+                                    Uploaded On</th>
+                                <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">Action
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="materialTableBody" class="bg-white divide-y divide-gray-200">
+                            {% for material in study_materials %}
+                            <tr class="hover:bg-gray-50 transition-colors duration-150 text-center material-row"
+                                data-subject="{{ material.subject|lower }}" data-grades="{{ material.grades|lower }}"
+                                data-topic="{{ material.topic|lower }}" data-subtopic="{{ material.sub_topic|lower }}"
+                                data-date="{{ material.created_at|date:'M d, Y' }}">
+                                <td class="py-4 whitespace-nowrap text-sm text-gray-500">{{ forloop.counter }}</td>
+                                <td class="py-4 text-gray-900">{{ material.subject }}</td>
+                                <td class="py-4 text-gray-900">
+                                    <div class="flex items-center justify-center space-x-2">
+                                        <span
+                                            class="inline-block px-3 py-1 text-sm font-medium bg-blue-100 text-blue-800 rounded-md">
+                                            {{ material.topic }}
+                                        </span>
+                                        {% if material.short_video_link %}
+                                        <a href="{{ material.short_video_link }}" target="_blank"
+                                            class="hover:underline text-red-600 flex items-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                                viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                            </svg>
+                                        </a>
+                                        {% endif %}
+                                    </div>
+                                </td>
+
+                                <td class="py-4 text-gray-900">
+                                    <div class="flex items-center justify-center space-x-2">
+                                        <span
+                                            class="inline-block px-3 py-1 text-sm font-medium bg-blue-100 text-blue-800 rounded-md">
+                                            {{ material.sub_topic }}
+                                        </span>
+                                    </div>
+                                </td>
+
+                                <td class="py-4 text-gray-900">
+                                    <span
+                                        class="inline-block px-3 py-1 text-sm font-medium bg-green-100 text-green-800 rounded-md">
+                                        Grade {{ material.grades }}
+                                    </span>
+                                </td>
+                                <td
+                                    class="py-4 whitespace-nowrap text-sm text-indigo-600 text-center flex justify-center items-center space-x-2">
+                                    <a href="{{ material.file_link }}" target="_blank"
+                                        class="hover:underline flex items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                        </svg>
+                                        View File
+                                    </a>
+
+                                </td>
+                                <td class="py-4 text-gray-500">{{ material.created_at|date:"M d, Y" }}</td>
+                                <td
+                                    class="py-4 whitespace-nowrap text-sm text-red-600 text-center flex justify-center items-center">
+                                    <a href="{% url 'delete_study_material' material.id %}"
+                                        class="hover:underline flex items-center"
+                                        onclick="return confirm('Are you sure you want to delete this material?')">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                        Delete
+                                    </a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr id="noResultsRow">
+                                <td colspan="7" class="text-center p-4">No study materials found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Practice Tests Section -->
+            <div id="section-practice" class="section hidden">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-bold">Practice Tests</h2>
+                    <button onclick="openCreateTestModal()"
+                        class="px-6 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition-all duration-300 flex items-center justify-center whitespace-nowrap">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        Create Test
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-lg">
+                    <div id="testsTableContainer">
+                        <!-- Tests will be loaded here dynamically -->
+                        <div class="text-center py-8 text-gray-500">
+                            <div class="animate-spin rounded-md h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4">
+                            </div>
+                            <p>Loading tests...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Teachers Section -->
+            <div id="section-teachers" class="section hidden">
+                <h2 class="text-2xl font-bold mb-4">Teachers</h2>
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <p>Coming soon...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create/Edit Test Modal -->
+    <div id="testModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeTestModal()">&times;</span>
+            <h2 id="modalTitle" class="text-2xl font-bold mb-6">Create Practice Test</h2>
+
+            <form id="testForm" class="space-y-6">
+                <!-- Test Basic Info -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="flex items-center mt-6">
+                        <input type="checkbox" id="isPractice"
+                            class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                        <label for="isPractice" class="ml-2 block mb-2 font-semibold">Is Practice Test
+                            (No Timer)</label>
+                    </div>
+
+                    <div>
+                        <label class="block mb-2 font-semibold">Test Name</label>
+                        <input type="text" id="testName" required
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+
+                    <div>
+                        <label class="block mb-2 font-semibold">Subject</label>
+                        <select id="testSubject" required
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">Select Subject</option>
+                            <option value="Maths">Maths</option>
+                            <option value="Public Speaking">Public Speaking</option>
+                            <option value="ELA">ELA</option>
+                            <option value="Personalized Courses">Personalized Courses</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block mb-2 font-semibold">Duration (minutes)</label>
+                        <input type="number" id="testDuration" min="1"
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+
+                    <div>
+                        <label for="testGrade" class="block mb-2 font-semibold text-gray-700">Select Grade</label>
+                        <select id="testGrade" required
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="">Select Grade</option>
+                            <option value="1">Grade 1</option>
+                            <option value="2">Grade 2</option>
+                            <option value="3">Grade 3</option>
+                            <option value="4">Grade 4</option>
+                            <option value="5">Grade 5</option>
+                            <option value="6">Grade 6</option>
+                            <option value="7">Grade 7</option>
+                            <option value="8">Grade 8</option>
+                            <option value="9">Grade 9</option>
+                            <option value="10">Grade 10</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Questions Section -->
+                <div class="border-t pt-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-bold">Questions</h3>
+                        <button type="button" onclick="addQuestion()"
+                            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                            Add Question
+                        </button>
+                    </div>
+
+                    <div id="questionsContainer">
+                        <!-- Questions will be added here dynamically -->
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="flex justify-end space-x-4 pt-6 border-t">
+                    <button type="button" onclick="closeTestModal()"
+                        class="px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition">
+                        Cancel
+                    </button>
+                    <button type="submit" id="submitBtn"
+                        class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                        Create Test
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- View Test Modal -->
+    <div id="viewTestModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeViewTestModal()">&times;</span>
+            <div id="viewTestContent">
+                <!-- Test details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Assign Test Modal -->
+    <div id="assignTestModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeAssignTestModal()">&times;</span>
+            <h2 class="text-2xl font-bold mb-6">Assign Test to Students</h2>
+
+            <div id="assignTestContent">
+                <div class="flex items-center justify-center py-4">
+                    <div class="spinner"></div>
+                    Loading students...
+                </div>
+            </div>
+
+            <div class="flex justify-end space-x-4 pt-6 border-t mt-6">
+                <button type="button" onclick="closeAssignTestModal()"
+                    class="px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition">
+                    Cancel
+                </button>
+                <button type="button" onclick="assignTestToSelectedStudents()" id="assignBtn"
+                    class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                    Assign Test
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="uploadModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-bold text-gray-800">Upload Study Material</h2>
+                    <button onclick="closeUploadModal()" class="text-gray-500 hover:text-gray-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                <form method="POST" action="{% url 'upload_study_material' %}" class="space-y-6">
+                    {% csrf_token %}
+                    <!-- Canva File Link -->
+                    <div>
+                        <label class="block mb-2 font-semibold text-gray-700">Canva File Link</label>
+                        <input type="text" name="file_link" required
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+
+                    <!-- Subject Dropdown -->
+                    <div>
+                        <label class="block mb-2 font-semibold text-gray-700">Subject</label>
+                        <select name="subject" required
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="">Select Subject</option>
+                            <option value="Maths">Maths</option>
+                            <option value="Public Speaking">Public Speaking</option>
+                            <option value="ELA">ELA</option>
+                            <option value="Personalized Courses">Personalized Courses</option>
+                        </select>
+                    </div>
+
+                    <!-- Topic -->
+                    <div>
+                        <label class="block mb-2 font-semibold text-gray-700">Topic</label>
+                        <input type="text" name="topic" id="topicInput" list="topicSuggestions"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                            placeholder="Enter topic or select from suggestions">
+                        <datalist id="topicSuggestions"></datalist>
+                    </div>
+
+                    <!-- Sub Topic -->
+                    <div>
+                        <label class="block mb-2 font-semibold text-gray-700">Sub Topic</label>
+                        <input type="text" name="subtopic" id="subTopicInput" list="subTopicSuggestions"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                            placeholder="Enter sub topic or select from suggestions">
+                        <datalist id="subTopicSuggestions"></datalist>
+                    </div>
+
+                    <!-- Canva File Link -->
+                    <div>
+                        <label class="block mb-2 font-semibold text-gray-700">Short Video Link</label>
+                        <input type="text" name="short_video_link"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+
+                    <!-- Grades Checkbox -->
+                    <div>
+                        <label class="block mb-2 font-semibold text-gray-700">Select Grades</label>
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                            <label class="flex items-center">
+                                <input type="checkbox" name="grades" value="1"
+                                    class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <span class="ml-2 text-gray-700">Grade 1</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" name="grades" value="2"
+                                    class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <span class="ml-2 text-gray-700">Grade 2</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" name="grades" value="3"
+                                    class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <span class="ml-2 text-gray-700">Grade 3</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" name="grades" value="4"
+                                    class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <span class="ml-2 text-gray-700">Grade 4</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" name="grades" value="5"
+                                    class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <span class="ml-2 text-gray-700">Grade 5</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" name="grades" value="6"
+                                    class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <span class="ml-2 text-gray-700">Grade 6</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" name="grades" value="7"
+                                    class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <span class="ml-2 text-gray-700">Grade 7</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" name="grades" value="8"
+                                    class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <span class="ml-2 text-gray-700">Grade 8</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" name="grades" value="9"
+                                    class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <span class="ml-2 text-gray-700">Grade 9</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" name="grades" value="10"
+                                    class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <span class="ml-2 text-gray-700">Grade 10</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="pt-4">
+                        <button type="submit"
+                            class="px-6 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition-all duration-300">
+                            Upload Material
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {% include 'skills/footer.html' %}
+
+    <script>
+        function openUploadModal() {
+            document.getElementById('uploadModal').classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
+        }
+
+        function closeUploadModal() {
+            document.getElementById('uploadModal').classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+        }
+
+        document.getElementById('uploadModal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeUploadModal();
+            }
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                closeUploadModal();
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const subjectSelect = document.querySelector('select[name="subject"]');
+
+            const topicInput = document.getElementById('topicInput');
+            const topicSuggestions = document.getElementById('topicSuggestions');
+
+            const subTopicInput = document.getElementById('subTopicInput');
+            const subTopicSuggestions = document.getElementById('subTopicSuggestions');
+
+            // When subject changes or input is focused, fetch topics and subtopics
+            subjectSelect.addEventListener('change', () => {
+                fetchTopics();
+                fetchSubTopics();
+            });
+
+            topicInput.addEventListener('focus', fetchTopics);
+            subTopicInput.addEventListener('focus', fetchSubTopics);
+
+            async function fetchTopics() {
+                const subject = subjectSelect.value;
+                if (!subject) return;
+
+                try {
+                    const response = await fetch(`/api/get-topics/?subject=${encodeURIComponent(subject)}`);
+                    const topics = await response.json();
+
+                    topicSuggestions.innerHTML = ''; // Clear old
+                    topics.forEach(topic => {
+                        const option = document.createElement('option');
+                        option.value = topic;
+                        topicSuggestions.appendChild(option);
+                    });
+                } catch (error) {
+                    console.error('Error fetching topics:', error);
+                }
+            }
+
+            async function fetchSubTopics() {
+                const subject = subjectSelect.value;
+                if (!subject) return;
+
+                try {
+                    const response = await fetch(`/api/get-subtopics/?subject=${encodeURIComponent(subject)}`);
+                    const subTopics = await response.json();
+
+                    subTopicSuggestions.innerHTML = ''; // Clear old
+                    subTopics.forEach(subTopic => {
+                        const option = document.createElement('option');
+                        option.value = subTopic;
+                        subTopicSuggestions.appendChild(option);
+                    });
+                } catch (error) {
+                    console.error('Error fetching subtopics:', error);
+                }
+            }
+        });
+
+        document.getElementById('materialSearch').addEventListener('input', function () {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('.material-row');
+            let hasVisibleRows = false;
+
+            // Check if there's a "no materials" row
+            const noResultsRow = document.getElementById('noResultsRow');
+            const isEmptyState = noResultsRow && !document.querySelector('.material-row');
+
+            rows.forEach(row => {
+                const subject = row.getAttribute('data-subject');
+                const grades = row.getAttribute('data-grades');
+                const date = row.getAttribute('data-date');
+                const topic = row.getAttribute('data-topic');
+                const subtopic = row.getAttribute('data-subtopic');
+
+                if (subject.includes(searchTerm) || grades.includes(searchTerm) || date.includes(searchTerm) || subtopic.includes(searchTerm) || topic.includes(searchTerm)) {
+                    row.style.display = '';
+                    hasVisibleRows = true;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            // Handle empty state
+            if (isEmptyState || !hasVisibleRows) {
+                if (!noResultsRow) {
+                    const tbody = document.getElementById('materialTableBody');
+                    const tr = document.createElement('tr');
+                    tr.id = 'noResultsRow';
+                    tr.innerHTML = '<td colspan="6" class="text-center p-4">No matching materials found.</td>';
+                    tbody.appendChild(tr);
+                } else {
+                    noResultsRow.style.display = '';
+                    noResultsRow.querySelector('td').textContent = 'No matching materials found.';
+                }
+            } else if (noResultsRow) {
+                noResultsRow.style.display = 'none';
+            }
+        });
+
+        document.getElementById('studentSearch').addEventListener('input', function () {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('.student-row');
+            let hasVisibleRows = false;
+
+            // Check if there's a "no materials" row
+            const noResultsRow = document.getElementById('noResultsRow');
+            const isEmptyState = noResultsRow && !document.querySelector('.material-row');
+
+            rows.forEach(row => {
+                const parent = row.getAttribute('data-parent');
+                const student = row.getAttribute('data-student');
+                const grade = row.getAttribute('data-grade');
+                const email = row.getAttribute('data-email');
+
+                if (parent.includes(searchTerm) || student.includes(searchTerm) || grade.includes(searchTerm) || email.includes(searchTerm)) {
+                    row.style.display = '';
+                    hasVisibleRows = true;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            // Handle empty state
+            if (isEmptyState || !hasVisibleRows) {
+                if (!noResultsRow) {
+                    const tbody = document.getElementById('materialTableBody');
+                    const tr = document.createElement('tr');
+                    tr.id = 'noResultsRow';
+                    tr.innerHTML = '<td colspan="6" class="text-center p-4">No matching materials found.</td>';
+                    tbody.appendChild(tr);
+                } else {
+                    noResultsRow.style.display = '';
+                    noResultsRow.querySelector('td').textContent = 'No matching materials found.';
+                }
+            } else if (noResultsRow) {
+                noResultsRow.style.display = 'none';
+            }
+        });
+
+
+        let questionCount = 0;
+        let editors = {};
+        let currentTestId = null;
+        let isEditMode = false;
+        let selectedTestForAssignment = null;
+
+        // Initialize page
+        window.onload = () => {
+            showSection('students');
+        };
+
+        function showSection(section) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(sec => sec.classList.add('hidden'));
+
+            // Show the selected section
+            const targetSection = document.getElementById(`section-${section}`);
+            if (targetSection) {
+                targetSection.classList.remove('hidden');
+            }
+
+            // Update tab styling
+            const tabs = ['students', 'upload', 'materials', 'practice', 'teachers'];
+            tabs.forEach(tab => {
+                const tabElement = document.getElementById(`tab-${tab}`);
+                if (tabElement) {
+                    tabElement.classList.remove('bg-gray-200');
+                }
+            });
+
+            const activeTab = document.getElementById(`tab-${section}`);
+            if (activeTab) {
+                activeTab.classList.add('bg-gray-200');
+            }
+
+            // Load tests when practice section is shown
+            if (section === 'practice') {
+                loadTests();
+            }
+        }
+
+        // Get CSRF token for Django requests
+        function getCsrfToken() {
+            const cookieValue = document.cookie
+                .split('; ')
+                .find(row => row.startsWith('csrftoken='))
+                ?.split('=')[1];
+
+            if (!cookieValue) {
+                // Try to get from meta tag if cookie not found
+                const metaToken = document.querySelector('meta[name="csrf-token"]');
+                return metaToken ? metaToken.getAttribute('content') : '';
+            }
+
+            return cookieValue;
+        }
+
+        // Load all tests
+        function loadTests() {
+            // Show loading state
+            const container = document.getElementById('testsTableContainer');
+            if (!container) {
+                console.error('testsTableContainer not found');
+                return;
+            }
+
+            container.innerHTML = '<div class="text-center py-4">Loading tests...</div>';
+
+            fetch('/api/get-all-tests/', {
+                method: 'GET',
+                headers: {
+                    'X-CSRFToken': getCsrfToken(),
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        displayTests(data.tests);
+                    } else {
+                        container.innerHTML = `
+                <div class="text-center py-4 text-red-500">
+                    Failed to load tests: ${data.message || 'Unknown error'}
+                </div>
+            `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading tests:', error);
+                    container.innerHTML = `
+            <div class="text-center py-4 text-red-500">
+                Error loading tests: ${error.message}. Please refresh the page.
+            </div>
+        `;
+                });
+        }
+
+        // Display tests in table
+        function displayTests(tests) {
+            const container = document.getElementById('testsTableContainer');
+
+            let html = `
+    <div class="bg-white rounded-xl shadow-md overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-blue-600">
+                <tr>
+                    <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">S.No</th>
+                    <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">Test Name</th>
+                    <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">Grade</th>
+                    <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">Subject</th>
+                    <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">Questions</th>
+                    <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">Duration</th>
+                    <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">Assigned</th>
+                    <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">Completed</th>
+                    <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">Created On</th>
+                    <th class="px-6 py-3 font-medium text-white uppercase tracking-wider">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200 text-center">
+    `;
+
+            if (!tests || tests.length === 0) {
+                html += `
+            <tr>
+                <td colspan="9" class="text-center p-8 text-gray-500">
+                    <div class="flex flex-col items-center">
+                        <svg class="w-12 h-12 mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        <p class="text-lg font-medium">No practice tests found</p>
+                        <p class="text-sm">Create your first test to get started</p>
+                    </div>
+                </td>
+            </tr>
+        `;
+            } else {
+                tests.forEach((test, index) => {
+                    html += `
+                <tr class="hover:bg-gray-50 transition-colors duration-150 text-center">
+                    <td class="py-4 whitespace-nowrap text-sm text-gray-500">${index + 1}</td>
+                    <td class="py-4 text-gray-900 font-medium">${escapeHtml(test.name)}</td>
+                    <td class="py-4">
+                        <span class="inline-block px-3 py-1 text-sm font-medium bg-black text-white rounded-md">
+                            Grade ${escapeHtml(test.grade || 'N/A')}
+                        </span>
+                    </td>
+                    <td class="py-4">
+                        <span class="inline-block px-3 py-1 text-sm font-medium bg-blue-100 text-blue-800 rounded-md">
+                            ${escapeHtml(test.subject || 'N/A')}
+                        </span>
+                    </td>
+                    <td class="py-4 text-gray-900 font-medium">${test.questions_count || 0}</td>
+                    <td class="py-4 text-gray-600">${test.duration_minutes || 0} min</td>
+                    <td class="py-4 text-indigo-600 font-medium">${test.assigned_count || 0}</td>
+                    <td class="py-4 text-green-600 font-medium">${test.completed_count || 0}</td>
+                    <td class="py-4 text-sm text-gray-500">${formatDate(test.created_at)}</td>
+                    <td class="py-4">
+                        <div class="flex justify-center items-center flex-wrap gap-2">
+                            <button onclick="viewTest(${test.id})"
+                                class="inline-flex items-center px-3 py-1 text-sm font-medium bg-blue-100 text-blue-800 rounded-md hover:bg-blue-200 transition">
+                                View
+                            </button>
+                            <button onclick="editTest(${test.id})"
+                                class="inline-flex items-center px-3 py-1 text-sm font-medium bg-yellow-100 text-yellow-800 rounded-md hover:bg-yellow-200 transition">
+                                Edit
+                            </button>
+                            <button onclick="assignTest(${test.id})"
+                                class="inline-flex items-center px-3 py-1 text-sm font-medium bg-indigo-100 text-indigo-800 rounded-md hover:bg-indigo-200 transition">
+                                Assign
+                            </button>
+                            <button onclick="viewResults(${test.id})"
+                                class="inline-flex items-center px-3 py-1 text-sm font-medium bg-green-100 text-green-800 rounded-md hover:bg-green-200 transition">
+                                Results
+                            </button>
+                            <button onclick="deleteTest(${test.id})"
+                                class="inline-flex items-center px-3 py-1 text-sm font-medium bg-red-100 text-red-800 rounded-md hover:bg-red-200 transition"
+                                onclick="return confirm('Are you sure you want to delete this test?')">
+                                Delete
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+                });
+            }
+
+            html += `
+            </tbody>
+        </table>
+    </div>
+    `;
+
+            container.innerHTML = html;
+        }
+
+
+        // Utility function to escape HTML
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text ? text.replace(/[&<>"']/g, function (m) { return map[m]; }) : '';
+        }
+
+        // Utility function to format date
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            try {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+            } catch (e) {
+                return dateString;
+            }
+        }
+
+        // View test details
+        function viewTest(testId) {
+            fetch(`/api/get-test/${testId}/`, {
+                method: 'GET',
+                headers: {
+                    'X-CSRFToken': getCsrfToken()
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        displayTestDetails(data.test);
+                    } else {
+                        alert('Error loading test details: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error loading test details.');
+                });
+        }
+
+        // Display test details in modal
+        function displayTestDetails(test) {
+            let html = `
+                <h2 class="text-2xl font-bold mb-4">${test.name}</h2>
+                
+                <div class="test-stats mb-6">
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="text-2xl font-bold">${test.questions.length}</div>
+                            <div class="text-sm">Questions</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="text-2xl font-bold">${test.duration_minutes}</div>
+                            <div class="text-sm">Minutes</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="text-2xl font-bold">${test.stats.total_assigned}</div>
+                            <div class="text-sm">Assigned</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="text-2xl font-bold">${test.stats.completed_count}</div>
+                            <div class="text-sm">Completed</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="text-2xl font-bold">${test.stats.average_score}%</div>
+                            <div class="text-sm">Avg Score</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <p><strong>Subject:</strong> ${test.subject}</p>
+                    <p><strong>Created:</strong> ${test.created_at}</p>
+                    <p><strong>Created by:</strong> ${test.created_by}</p>
+                </div>
+
+                <h3 class="text-xl font-bold mb-4">Questions</h3>
+            `;
+
+            test.questions.forEach((question, index) => {
+                html += `
+                    <div class="question-card mb-4">
+                        <h4 class="font-semibold mb-2">Question ${index + 1} (${question.points} points)</h4>
+                        <div class="mb-3">${question.text}</div>
+                        ${question.image_url ? `<img src="${question.image_url}" alt="Question image" class="question-image mb-3">` : ''}
+                        
+                        <div class="space-y-2">
+                `;
+
+                question.options.forEach((option, optIndex) => {
+                    const isCorrect = option.is_correct;
+                    html += `
+                        <div class="option-item ${isCorrect ? 'correct-option' : ''}">
+                            <div class="flex items-center">
+                                <span class="font-medium mr-2">${String.fromCharCode(65 + optIndex)}.</span>
+                                <div class="flex-1">${option.text}</div>
+                                ${isCorrect ? '<span class="text-green-600 font-bold ml-2">✓ Correct</span>' : ''}
+                            </div>
+                            ${option.image_url ? `<img src="${option.image_url}" alt="Option image" class="option-image ml-6">` : ''}
+                        </div>
+                    `;
+                });
+
+                html += `
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('viewTestContent').innerHTML = html;
+            document.getElementById('viewTestModal').style.display = 'block';
+        }
+
+        // Edit test
+        function editTest(testId) {
+            fetch(`/api/get-test/${testId}/`, {
+                method: 'GET',
+                headers: {
+                    'X-CSRFToken': getCsrfToken()
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        populateTestForm(data.test);
+                        isEditMode = true;
+                        currentTestId = testId;
+                        document.getElementById('modalTitle').textContent = 'Edit Practice Test';
+                        document.getElementById('submitBtn').textContent = 'Update Test';
+                        document.getElementById('testModal').style.display = 'block';
+                    } else {
+                        alert('Error loading test: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error loading test.');
+                });
+        }
+
+        // Populate form for editing
+        function populateTestForm(test) {
+            document.getElementById('testName').value = test.name;
+            document.getElementById('testSubject').value = test.subject;
+            document.getElementById('testDuration').value = test.duration_minutes;
+
+            // Clear existing questions
+            document.getElementById('questionsContainer').innerHTML = '';
+            questionCount = 0;
+            editors = {};
+
+            // Add questions
+            test.questions.forEach((question, index) => {
+                addQuestion();
+                const questionId = questionCount;
+
+                // Set question data
+                setTimeout(() => {
+                    if (editors[`questionText-${questionId}`]) {
+                        editors[`questionText-${questionId}`].setData(question.text);
+                    }
+                    document.getElementById(`questionPoints-${questionId}`).value = question.points;
+
+                    // Set options data
+                    question.options.forEach((option, optIndex) => {
+                        if (editors[`optionText-${questionId}-${optIndex + 1}`]) {
+                            editors[`optionText-${questionId}-${optIndex + 1}`].setData(option.text);
+                        }
+                        if (option.is_correct) {
+                            document.getElementById(`correct-${questionId}-${optIndex + 1}`).checked = true;
+                            markCorrectOption(questionId, optIndex + 1);
+                        }
+                    });
+                }, 500);
+            });
+        }
+
+        // Delete test
+        function deleteTest(testId) {
+            if (confirm('Are you sure you want to delete this test? This action cannot be undone.')) {
+                fetch(`/api/delete-test/${testId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCsrfToken()
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showAlert(data.message, 'success');
+                            loadTests();
+                        } else {
+                            showAlert('Error deleting test: ' + data.message, 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showAlert('Error deleting test.', 'error');
+                    });
+            }
+        }
+
+        // Assign test to students
+        function assignTest(testId) {
+            // First get the test details to know the grade
+            fetch(`/api/get-test/${testId}/`, {
+                method: 'GET',
+                headers: {
+                    'X-CSRFToken': getCsrfToken()
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const testGrade = data.test.grade;
+                        selectedTestForAssignment = testId;
+
+                        // Load students for assignment filtered by grade
+                        fetch(`/api/get-students-for-assignment/?grade=${testGrade}`, {
+                            method: 'GET',
+                            headers: {
+                                'X-CSRFToken': getCsrfToken()
+                            }
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                displayStudentsForAssignment(data.students);
+                                document.getElementById('assignTestModal').style.display = 'block';
+                            })
+                            .catch(error => {
+                                console.error('Error loading students:', error);
+                                showAlert('Error loading students for assignment.', 'error');
+                            });
+                    } else {
+                        showAlert('Error loading test details: ' + data.message, 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading test:', error);
+                    showAlert('Error loading test details.', 'error');
+                });
+        }
+
+        // Display students for assignment
+        function displayStudentsForAssignment(students) {
+            let html = `
+        <div class="mb-4">
+            <div class="flex items-center mb-4">
+                <input type="checkbox" id="selectAllStudents" onchange="toggleAllStudents()" class="mr-2">
+                <label for="selectAllStudents" class="font-medium">Select All Students</label>
+            </div>
+            
+            <div class="mb-4">
+                <label class="block mb-2 font-medium">Expiration Date</label>
+                <input type="date" id="expirationDate" class="border border-gray-300 rounded-lg px-3 py-2">
+            </div>
+        </div>
+        
+        <div class="max-h-96 overflow-y-auto border rounded-lg">
+            <table class="min-w-full">
+                <thead class="bg-blue-600 text-white sticky top-0">
+                    <tr>
+                        <th class="text-left p-3">Select</th>
+                        <th class="text-left p-3">Student Name</th>
+                        <th class="text-left p-3">Parent Name</th>
+                        <th class="text-left p-3">Grade</th>
+                        <th class="text-left p-3">Email</th>
+                    </tr>
+                </thead>
+                <tbody>
+    `;
+
+            if (students.length === 0) {
+                html += `
+            <tr>
+                <td colspan="5" class="text-center p-4">No students found for this grade.</td>
+            </tr>
+        `;
+            } else {
+                students.forEach(student => {
+                    html += `
+                <tr class="border-t hover:bg-gray-50">
+                    <td class="p-3">
+                        <input type="checkbox" class="student-checkbox" value="${student.id}">
+                    </td>
+                    <td class="p-3">${student.student_name}</td>
+                    <td class="p-3">${student.parent_name}</td>
+                    <td class="p-3">${student.grade}</td>
+                    <td class="p-3">${student.email}</td>
+                </tr>
+            `;
+                });
+            }
+
+            html += `
+                </tbody>
+            </table>
+        </div>
+    `;
+
+            document.getElementById('assignTestContent').innerHTML = html;
+
+            // Set default expiration date to 30 days from now
+            const defaultDate = new Date();
+            defaultDate.setDate(defaultDate.getDate() + 30);
+            document.getElementById('expirationDate').valueAsDate = defaultDate;
+        }
+
+        // Toggle all students selection
+        function toggleAllStudents() {
+            const selectAll = document.getElementById('selectAllStudents');
+            const checkboxes = document.querySelectorAll('.student-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = selectAll.checked;
+            });
+        }
+
+        // Assign test to selected students
+        function assignTestToSelectedStudents() {
+            const selectedStudents = Array.from(document.querySelectorAll('.student-checkbox:checked'))
+                .map(checkbox => checkbox.value);
+
+            if (selectedStudents.length === 0) {
+                showAlert('Please select at least one student.', 'warning');
+                return;
+            }
+
+            const expirationDate = document.getElementById('expirationDate').value;
+            if (!expirationDate) {
+                showAlert('Please select an expiration date.', 'warning');
+                return;
+            }
+
+            const assignBtn = document.getElementById('assignBtn');
+            assignBtn.innerHTML = '<div class="spinner"></div> Assigning...';
+            assignBtn.disabled = true;
+
+            fetch('/api/assign-test/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCsrfToken()
+                },
+                body: JSON.stringify({
+                    test_id: selectedTestForAssignment,
+                    student_ids: selectedStudents,
+                    expiration_date: expirationDate
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showAlert(data.message, 'success');
+                        closeAssignTestModal();
+                        loadTests();
+                    } else {
+                        showAlert('Error assigning test: ' + data.message, 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showAlert('Error assigning test.', 'error');
+                })
+                .finally(() => {
+                    assignBtn.innerHTML = 'Assign Test';
+                    assignBtn.disabled = false;
+                });
+        }
+
+        // View test results
+        function viewResults(testId) {
+            window.open(`/admin/test-results/${testId}/`, '_blank');
+        }
+
+        // Modal functions
+        function openCreateTestModal() {
+            isEditMode = false;
+            currentTestId = null;
+            document.getElementById('modalTitle').textContent = 'Create Practice Test';
+            document.getElementById('submitBtn').textContent = 'Create Test';
+            resetTestForm();
+            document.getElementById('testModal').style.display = 'block';
+        }
+
+        function closeTestModal() {
+            document.getElementById('testModal').style.display = 'none';
+            resetTestForm();
+        }
+
+        function closeViewTestModal() {
+            document.getElementById('viewTestModal').style.display = 'none';
+        }
+
+        function closeAssignTestModal() {
+            document.getElementById('assignTestModal').style.display = 'none';
+            selectedTestForAssignment = null;
+        }
+
+        // Reset test form
+        function resetTestForm() {
+            document.getElementById('testForm').reset();
+            document.getElementById('questionsContainer').innerHTML = '';
+            questionCount = 0;
+            editors = {};
+        }
+
+        // Add question to test
+        function addQuestion() {
+            questionCount++;
+            const questionId = questionCount;
+
+            const questionHtml = `
+                <div class="question-card" id="question-${questionId}">
+                    <div class="flex justify-between items-center mb-4">
+                        <h4 class="text-lg font-semibold">Question ${questionId}</h4>
+                        <button type="button" onclick="removeQuestion(${questionId})" 
+                            class="text-red-500 hover:text-red-700">Remove</button>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block mb-2 font-medium">Question Text</label>
+                        <textarea id="questionText-${questionId}" class="question-editor"></textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block mb-2 font-medium">Points</label>
+                        <input type="number" id="questionPoints-${questionId}" value="1" min="1" max="10"
+                            class="w-24 border border-gray-300 rounded-lg px-3 py-2">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block mb-2 font-medium">Question Image (Optional)</label>
+                        <input type="file" accept="image/*" onchange="handleQuestionImageUpload(${questionId}, this)"
+                            class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                        <div id="questionImagePreview-${questionId}" class="mt-2"></div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block mb-2 font-medium">Options</label>
+                        <div id="optionsContainer-${questionId}">
+                            ${generateOptionsHtml(questionId)}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('questionsContainer').insertAdjacentHTML('beforeend', questionHtml);
+
+            // Initialize CKEditor for question text
+            setTimeout(() => {
+                ClassicEditor.create(document.querySelector(`#questionText-${questionId}`))
+                    .then(editor => {
+                        editors[`questionText-${questionId}`] = editor;
+                    })
+                    .catch(error => {
+                        console.error('Error initializing question editor:', error);
+                    });
+
+                // Initialize CKEditor for each option
+                for (let i = 1; i <= 4; i++) {
+                    ClassicEditor.create(document.querySelector(`#optionText-${questionId}-${i}`))
+                        .then(editor => {
+                            editors[`optionText-${questionId}-${i}`] = editor;
+                        })
+                        .catch(error => {
+                            console.error('Error initializing option editor:', error);
+                        });
+                }
+            }, 100);
+        }
+
+        // Generate options HTML
+        function generateOptionsHtml(questionId) {
+            let html = '';
+            for (let i = 1; i <= 4; i++) {
+                html += `
+                    <div class="option-item mb-3">
+                        <div class="flex items-center mb-2">
+                            <input type="radio" name="correct-${questionId}" id="correct-${questionId}-${i}" 
+                                value="${i}" onchange="markCorrectOption(${questionId}, ${i})" class="mr-2">
+                            <label for="correct-${questionId}-${i}" class="font-medium">Option ${String.fromCharCode(64 + i)} (Correct Answer)</label>
+                        </div>
+                        <textarea id="optionText-${questionId}-${i}" class="option-editor mb-2" placeholder="Enter option text..."></textarea>
+                        <input type="file" accept="image/*" onchange="handleOptionImageUpload(${questionId}, ${i}, this)"
+                            class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100">
+                        <div id="optionImagePreview-${questionId}-${i}" class="mt-2"></div>
+                    </div>
+                `;
+            }
+            return html;
+        }
+
+        // Mark correct option
+        function markCorrectOption(questionId, optionIndex) {
+            const options = document.querySelectorAll(`#optionsContainer-${questionId} .option-item`);
+            options.forEach((option, index) => {
+                if (index === optionIndex - 1) {
+                    option.classList.add('correct-option');
+                } else {
+                    option.classList.remove('correct-option');
+                }
+            });
+        }
+
+        // Remove question
+        function removeQuestion(questionId) {
+            if (confirm('Are you sure you want to remove this question?')) {
+                // Destroy CKEditor instances
+                if (editors[`questionText-${questionId}`]) {
+                    editors[`questionText-${questionId}`].destroy();
+                    delete editors[`questionText-${questionId}`];
+                }
+
+                for (let i = 1; i <= 4; i++) {
+                    if (editors[`optionText-${questionId}-${i}`]) {
+                        editors[`optionText-${questionId}-${i}`].destroy();
+                        delete editors[`optionText-${questionId}-${i}`];
+                    }
+                }
+
+                document.getElementById(`question-${questionId}`).remove();
+            }
+        }
+
+        // Handle question image upload
+        function handleQuestionImageUpload(questionId, input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                if (validateImageFile(file)) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const preview = document.getElementById(`questionImagePreview-${questionId}`);
+                        preview.innerHTML = `
+                            <div class="relative inline-block">
+                                <img src="${e.target.result}" alt="Question preview" class="question-image border rounded">
+                                <button type="button" onclick="removeQuestionImage(${questionId})" 
+                                    class="absolute top-0 right-0 bg-red-500 text-white rounded-md w-6 h-6 flex items-center justify-center text-xs">×</button>
+                            </div>
+                        `;
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    input.value = '';
+                    showAlert('Please select a valid image file (JPG, PNG, GIF) under 5MB.', 'error');
+                }
+            }
+        }
+
+        // Handle option image upload
+        function handleOptionImageUpload(questionId, optionIndex, input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                if (validateImageFile(file)) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const preview = document.getElementById(`optionImagePreview-${questionId}-${optionIndex}`);
+                        preview.innerHTML = `
+                            <div class="relative inline-block">
+                                <img src="${e.target.result}" alt="Option preview" class="option-image border rounded">
+                                <button type="button" onclick="removeOptionImage(${questionId}, ${optionIndex})" 
+                                    class="absolute top-0 right-0 bg-red-500 text-white rounded-md w-6 h-6 flex items-center justify-center text-xs">×</button>
+                            </div>
+                        `;
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    input.value = '';
+                    showAlert('Please select a valid image file (JPG, PNG, GIF) under 5MB.', 'error');
+                }
+            }
+        }
+
+        // Remove question image
+        function removeQuestionImage(questionId) {
+            document.getElementById(`questionImagePreview-${questionId}`).innerHTML = '';
+        }
+
+        // Remove option image
+        function removeOptionImage(questionId, optionIndex) {
+            document.getElementById(`optionImagePreview-${questionId}-${optionIndex}`).innerHTML = '';
+        }
+
+        // Validate image file
+        function validateImageFile(file) {
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+            const maxSize = 5 * 1024 * 1024; // 5MB
+
+            return allowedTypes.includes(file.type) && file.size <= maxSize;
+        }
+
+        // Handle test form submission
+        document.getElementById('testForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.textContent;
+            submitBtn.innerHTML = '<div class="spinner"></div> Processing...';
+            submitBtn.disabled = true;
+
+            try {
+                const testData = collectTestData();
+
+                if (!validateTestData(testData)) {
+                    return;
+                }
+
+                const url = isEditMode ? `/api/edit-test/${currentTestId}/` : '/api/create-test/';
+
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCsrfToken()
+                    },
+                    body: JSON.stringify(testData)
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showAlert(data.message, 'success');
+                            closeTestModal();
+                            loadTests();
+                        } else {
+                            showAlert('Error: ' + data.message, 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showAlert('Error submitting test.', 'error');
+                    });
+
+            } catch (error) {
+                console.error('Error collecting test data:', error);
+                showAlert('Error preparing test data.', 'error');
+            } finally {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Collect test data from form
+        function collectTestData() {
+            const testData = {
+                name: document.getElementById('testName').value.trim(),
+                subject: document.getElementById('testSubject').value,
+                duration: document.getElementById('testDuration').value,
+                grade: document.getElementById('testGrade').value.trim(),
+                is_practice: document.getElementById('isPractice').checked,
+                questions: []
+            };
+
+            const questionCards = document.querySelectorAll('.question-card');
+            questionCards.forEach((card, index) => {
+                const questionId = card.id.split('-')[1];
+
+                const questionData = {
+                    text: editors[`questionText-${questionId}`] ? editors[`questionText-${questionId}`].getData() : '',
+                    points: document.getElementById(`questionPoints-${questionId}`).value,
+                    questionImage: getImageDataUrl(`questionImagePreview-${questionId}`),
+                    options: []
+                };
+
+                // Collect options
+                for (let i = 1; i <= 4; i++) {
+                    const optionData = {
+                        text: editors[`optionText-${questionId}-${i}`] ? editors[`optionText-${questionId}-${i}`].getData() : '',
+                        isCorrect: document.getElementById(`correct-${questionId}-${i}`).checked,
+                        optionImage: getImageDataUrl(`optionImagePreview-${questionId}-${i}`)
+                    };
+                    questionData.options.push(optionData);
+                }
+
+                testData.questions.push(questionData);
+            });
+
+            return testData;
+        }
+
+        // Get image data URL from preview element
+        function getImageDataUrl(previewId) {
+            const preview = document.getElementById(previewId);
+            if (preview && preview.querySelector('img')) {
+                return preview.querySelector('img').src;
+            }
+            return null;
+        }
+
+        // Validate test data
+        function validateTestData(testData) {
+            if (!testData.name) {
+                showAlert('Please enter a test name.', 'warning');
+                return false;
+            }
+
+            if (!testData.subject) {
+                showAlert('Please select a subject.', 'warning');
+                return false;
+            }
+
+            if (testData.questions.length === 0) {
+                showAlert('Please add at least one question.', 'warning');
+                return false;
+            }
+
+            // Validate each question
+            for (let i = 0; i < testData.questions.length; i++) {
+                const question = testData.questions[i];
+
+                if (!question.text.trim()) {
+                    showAlert(`Question ${i + 1}: Please enter question text.`, 'warning');
+                    return false;
+                }
+
+                if (!question.points || question.points < 1) {
+                    showAlert(`Question ${i + 1}: Please enter valid points.`, 'warning');
+                    return false;
+                }
+
+                // Check if at least one option is correct
+                const hasCorrectOption = question.options.some(option => option.isCorrect);
+                if (!hasCorrectOption) {
+                    showAlert(`Question ${i + 1}: Please mark one option as correct.`, 'warning');
+                    return false;
+                }
+
+                // Check if all options have text
+                const emptyOptions = question.options.filter(option => !option.text.trim());
+                if (emptyOptions.length > 0) {
+                    showAlert(`Question ${i + 1}: Please fill in all option texts.`, 'warning');
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        // Utility functions
+        function getCsrfToken() {
+            return document.querySelector('[name=csrfmiddlewaretoken]').value;
+        }
+
+        function showAlert(message, type = 'info') {
+            // Create alert element
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm ${getAlertClasses(type)}`;
+            alertDiv.innerHTML = `
+                <div class="flex items-center">
+                    <span class="flex-1">${message}</span>
+                    <button onclick="this.parentElement.parentElement.remove()" class="ml-2 text-lg">&times;</button>
+                </div>
+            `;
+
+            document.body.appendChild(alertDiv);
+
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (alertDiv.parentElement) {
+                    alertDiv.remove();
+                }
+            }, 5000);
+        }
+
+        function getAlertClasses(type) {
+            switch (type) {
+                case 'success':
+                    return 'bg-green-100 border border-green-400 text-green-700';
+                case 'error':
+                    return 'bg-red-100 border border-red-400 text-red-700';
+                case 'warning':
+                    return 'bg-yellow-100 border border-yellow-400 text-yellow-700';
+                default:
+                    return 'bg-blue-100 border border-blue-400 text-blue-700';
+            }
+        }
+
+        // Close modals when clicking outside
+        window.onclick = function (event) {
+            const modals = ['testModal', 'viewTestModal', 'assignTestModal'];
+            modals.forEach(modalId => {
+                const modal = document.getElementById(modalId);
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        };
+
+        // Handle keyboard shortcuts
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                // Close any open modals
+                const modals = ['testModal', 'viewTestModal', 'assignTestModal'];
+                modals.forEach(modalId => {
+                    const modal = document.getElementById(modalId);
+                    if (modal.style.display === 'block') {
+                        modal.style.display = 'none';
+                    }
+                });
+            }
+        });
+
+    </script>

@@ -1,0 +1,119 @@
+{% load static tailwind_tags %}
+
+<section class="py-16 sm:py-20 relative overflow-hidden">
+    <!-- Random SVG Container -->
+    <div id="random-svg-container" class="absolute inset-0 w-full h-full pointer-events-none"></div>
+
+    <!-- Section Title -->
+    <h1 class="text-center text-3xl sm:text-4xl lg:text-4xl font-bold leading-snug text-gray-800">
+        Getting Started is Super <span class="text-blue-600">Easy</span>
+    </h1>
+
+    <p class="text-blue-600 font-semibold text-lg sm:text-xl text-center mt-4 sm:mt-6">
+        Take a demo session for FREE and decide for yourself a functioning PC & stable internet is all you need!
+    </p>
+
+    <div class="container mx-auto mt-16 px-6">
+        <!-- Responsive Grid Layout -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 relative">
+            <!-- Step 1 -->
+            <div class="bg-white shadow-lg px-6 py-12 rounded-xl transition-transform duration-300 hover:scale-105">
+                <img src="{% static 'img/Step01.png' %}" alt="Select Course" class="w-[80%] mx-auto">
+                <div class="mt-6 text-center">
+                    <h2 class="text-lg sm:text-xl font-semibold text-gray-800">Select Course</h2>
+                    <p class="text-gray-600 mt-3 text-sm sm:text-base">
+                        Choose a course based on your child's need, or contact us for personalized learning plans.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="bg-white shadow-lg px-6 py-12 rounded-xl transition-transform duration-300 hover:scale-105">
+                <img src="{% static 'img/Step02.png' %}" alt="Book a Free Trial" class="w-[80%] mx-auto">
+                <div class="mt-6 text-center">
+                    <h2 class="text-lg sm:text-xl font-semibold text-gray-800">Book a Free Trial</h2>
+                    <p class="text-gray-600 mt-3 text-sm sm:text-base">
+                        Simply select your preferred day and time slot, and fill in the student details.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="bg-white shadow-lg px-6 py-12 rounded-xl transition-transform duration-300 hover:scale-105">
+                <img src="{% static 'img/Step03.png' %}" alt="Enroll for the Courses" class="w-[80%] mx-auto">
+                <div class="mt-6 text-center">
+                    <h2 class="text-lg sm:text-xl font-semibold text-gray-800">Enroll for the Courses</h2>
+                    <p class="text-gray-600 mt-3 text-sm sm:text-base">
+                        If you're satisfied with the demo class, kickstart your child's learning journey!
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const svgContainer = document.getElementById("random-svg-container");
+
+        const svgImages = [
+            "https://wpocean.com/html/tf/eduko/assets/images/shape/vector-2.svg",
+            "https://wpocean.com/html/tf/eduko/assets/images/shape/vector-6.svg",
+            "https://wpocean.com/html/tf/eduko/assets/images/shape/vector-12.svg",
+            "https://wpocean.com/html/tf/eduko/assets/images/shape/vector-1.svg",
+            "https://wpocean.com/html/tf/eduko/assets/images/shape/vector-5.svg",
+            "https://wpocean.com/html/tf/eduko/assets/images/shape/vector-3.svg",
+            "https://wpocean.com/html/tf/eduko/assets/images/shape/vector-10.svg",
+            "https://wpocean.com/html/tf/eduko/assets/images/shape/vector-9.svg"
+        ];
+
+        const placedPositions = [];  // Store already placed positions
+
+        function getRandomPosition() {
+            let maxAttempts = 20;  // Limit re-tries to prevent infinite loops
+
+            while (maxAttempts > 0) {
+                let top = Math.floor(Math.random() * 80); // 0 to 80 vh
+                let left = Math.floor(Math.random() * 90); // 0 to 90 vw
+                let size = Math.random() * 80 + 20; // Random size (20px - 100px)
+
+                // Check if the new position is too close to any existing ones
+                let isValid = true;
+                for (let pos of placedPositions) {
+                    let distance = Math.sqrt(Math.pow(pos.top - top, 2) + Math.pow(pos.left - left, 2));
+                    if (distance < size / 2) {  // Minimum spacing
+                        isValid = false;
+                        break;
+                    }
+                }
+
+                if (isValid) {
+                    placedPositions.push({ top, left }); // Save valid position
+                    return { top: top + "vh", left: left + "vw", size };
+                }
+
+                maxAttempts--; // Reduce attempts if overlap is found
+            }
+
+            return { top: "50vh", left: "50vw", size: 50 }; // Fallback in case no valid position is found
+        }
+
+        function placeSVGs() {
+            svgContainer.innerHTML = ""; // Clear previous SVGs on refresh
+            svgImages.forEach((imgSrc) => {
+                const img = document.createElement("img");
+                const pos = getRandomPosition();
+                img.src = imgSrc;
+                img.classList.add("absolute", "opacity-50");
+                img.style.top = pos.top;
+                img.style.left = pos.left;
+                img.style.width = pos.size + "px";
+                img.style.height = pos.size + "px";
+                svgContainer.appendChild(img);
+            });
+        }
+
+        placeSVGs();
+    });
+
+</script>

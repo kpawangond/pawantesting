@@ -1,0 +1,490 @@
+{% load static tailwind_tags bootstrap_icons %}
+
+<section class="py-16 text-black">
+    <div class="container mx-auto px-6">
+        <!-- Section Title -->
+        <p class="text-blue-600 font-semibold text-lg text-center">Testimonials</p>
+        <h1 class="text-center text-gray-800 text-3xl font-bold mt-4">
+            What Parents Say About Us
+        </h1>
+
+        <!-- Continuous Scrolling Testimonials Carousel with Fade Overlay -->
+        <div class="testimonials-carousel-container relative mt-12 overflow-hidden">
+            <!-- Fade Overlays -->
+            <div class="fade-overlay fade-left"></div>
+            <div class="fade-overlay fade-right"></div>
+
+            <div class="testimonials-track flex animate-scroll py-8" id="testimonialsTrack">
+                <!-- Review 1 -->
+                <div class="testimonial-item w-full md:w-1/3 lg:w-1/4 flex-shrink-0 px-4">
+                    <div class="bg-white rounded-xl p-6 flex flex-col items-center text-center text-gray-800 h-full"
+                        style="box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;">
+                        <img src="https://randomuser.me/api/portraits/women/25.jpg" alt="Leslie Alexander"
+                            class="w-16 h-16 rounded-full border-4 border-gray-300 mb-4">
+                        <h2 class="text-xl font-semibold"> Ramesh Kumar, Parent</h2>
+                        <p class="text-gray-500 text-sm">Houston, Texas</p>
+
+                        <div class="flex items-center justify-center mt-2">
+                            <span class="text-yellow-400">★★★★★</span>
+                            <span class="text-gray-600 text-sm ml-2">(5.0)</span>
+                        </div>
+
+                        <p class="text-gray-700 mt-4 text-sm leading-relaxed">
+                            "My son struggled with algebra, but now he gets it! The progress of my child is clearly
+                            visible in terms of his scores and confidence."
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Review 2 -->
+                <div class="testimonial-item w-full md:w-1/3 lg:w-1/4 flex-shrink-0 px-4">
+                    <div class="bg-white rounded-xl p-6 flex flex-col items-center text-center text-gray-800 h-full"
+                        style="box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;">
+                        <img src="https://randomuser.me/api/portraits/women/78.jpg" alt="Emma Johnson"
+                            class="w-16 h-16 rounded-full border-4 border-gray-300 mb-4">
+                        <h2 class="text-xl font-semibold">Sarah Phillips, Parent</h2>
+                        <p class="text-gray-500 text-sm">Louisiana</p>
+
+                        <div class="flex items-center justify-center mt-2">
+                            <span class="text-yellow-400">★★★★☆</span>
+                            <span class="text-gray-600 text-sm ml-2">(4.0)</span>
+                        </div>
+
+                        <p class="text-gray-700 mt-4 text-sm leading-relaxed">
+                            "My daughter is learning from Ms. Vartika and she is amazing teacher! My daughter has gone
+                            from not understanding math to enjoying it, specially statistics."
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Review 3 -->
+                <div class="testimonial-item w-full md:w-1/3 lg:w-1/4 flex-shrink-0 px-4">
+                    <div class="bg-white rounded-xl p-6 flex flex-col items-center text-center text-gray-800 h-full"
+                        style="box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;">
+                        <img src="https://randomuser.me/api/portraits/women/45.jpg" alt="Nime Johnson"
+                            class="w-16 h-16 rounded-full border-4 border-gray-300 mb-4">
+                        <h2 class="text-xl font-semibold">Sandeep Patel, Parent</h2>
+                        <p class="text-gray-500 text-sm">Louisiana</p>
+
+                        <div class="flex items-center justify-center mt-2">
+                            <span class="text-yellow-400">★★★★☆</span>
+                            <span class="text-gray-600 text-sm ml-2">(4.0)</span>
+                        </div>
+
+                        <p class="text-gray-700 mt-4 text-sm leading-relaxed">
+                            "Thanks to this program, my son is much more confident with math. His grades have gone up,
+                            and he's doing well in school ."
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Review 4 -->
+                <div class="testimonial-item w-full md:w-1/3 lg:w-1/4 flex-shrink-0 px-4">
+                    <div class="bg-white rounded-xl p-6 flex flex-col items-center text-center text-gray-800 h-full"
+                        style="box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Michael Chen"
+                            class="w-16 h-16 rounded-full border-4 border-gray-300 mb-4">
+                        <h2 class="text-xl font-semibold">Amanda Johnson, Parent</h2>
+                        <p class="text-gray-500 text-sm">Atlanta, Geogia</p>
+
+                        <div class="flex items-center justify-center mt-2">
+                            <span class="text-yellow-400">★★★★★</span>
+                            <span class="text-gray-600 text-sm ml-2">(5.0)</span>
+                        </div>
+
+                        <p class="text-gray-700 mt-4 text-sm leading-relaxed">
+                            "I'm amazed at how quickly my daughter improved in math. Teacher Vartika is very patient and
+                            clears concepts and doubts nicely"
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Review 5 -->
+                <div class="testimonial-item w-full md:w-1/3 lg:w-1/4 flex-shrink-0 px-4">
+                    <div class="bg-white rounded-xl p-6 flex flex-col items-center text-center text-gray-800 h-full"
+                        style="box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;">
+                        <img src="https://randomuser.me/api/portraits/women/33.jpg" alt="Sarah Williams"
+                            class="w-16 h-16 rounded-full border-4 border-gray-300 mb-4">
+                        <h2 class="text-xl font-semibold">Vikram Desai, Parent</h2>
+                        <p class="text-gray-500 text-sm">Chicago, Illinois</p>
+
+                        <div class="flex items-center justify-center mt-2">
+                            <span class="text-yellow-400">★★★★★</span>
+                            <span class="text-gray-600 text-sm ml-2">(5.0)</span>
+                        </div>
+
+                        <p class="text-gray-700 mt-4 text-sm leading-relaxed">
+                            "My son was always afraid of math, but now he's doing well in calculus and preparing for
+                            SAT"
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Review 6 -->
+                <div class="testimonial-item w-full md:w-1/3 lg:w-1/4 flex-shrink-0 px-4">
+                    <div class="bg-white rounded-xl p-6 flex flex-col items-center text-center text-gray-800 h-full"
+                        style="box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;">
+                        <img src="https://randomuser.me/api/portraits/men/42.jpg" alt="David Rodriguez"
+                            class="w-16 h-16 rounded-full border-4 border-gray-300 mb-4">
+                        <h2 class="text-xl font-semibold">Suman Chawla, Parent</h2>
+                        <p class="text-gray-500 text-sm">Texas</p>
+
+                        <div class="flex items-center justify-center mt-2">
+                            <span class="text-yellow-400">★★★★☆</span>
+                            <span class="text-gray-600 text-sm ml-2">(4.0)</span>
+                        </div>
+
+                        <p class="text-gray-700 mt-4 text-sm leading-relaxed">
+                            "Teacher Tarun explains things so well. My daughter is preparing for Math Kangroo and her
+                            speed has improved so much"
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Review 7 -->
+                <div class="testimonial-item w-full md:w-1/3 lg:w-1/4 flex-shrink-0 px-4">
+                    <div class="bg-white rounded-xl p-6 flex flex-col items-center text-center text-gray-800 h-full"
+                        style="box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;">
+                        <img src="https://randomuser.me/api/portraits/women/67.jpg" alt="Jennifer Patel"
+                            class="w-16 h-16 rounded-full border-4 border-gray-300 mb-4">
+                        <h2 class="text-xl font-semibold">Jessica Moore, Parent</h2>
+                        <p class="text-gray-500 text-sm">Texas</p>
+
+                        <div class="flex items-center justify-center mt-2">
+                            <span class="text-yellow-400">★★★★★</span>
+                            <span class="text-gray-600 text-sm ml-2">(5.0)</span>
+                        </div>
+
+                        <p class="text-gray-700 mt-4 text-sm leading-relaxed">
+                            "Math was always hard for my son, but with Teacher Tarun's help, he now enjoys it,
+                            especially word problems!"
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Review 8 -->
+                <div class="testimonial-item w-full md:w-1/3 lg:w-1/4 flex-shrink-0 px-4">
+                    <div class="bg-white rounded-xl p-6 flex flex-col items-center text-center text-gray-800 h-full"
+                        style="box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;">
+                        <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Robert Kim"
+                            class="w-16 h-16 rounded-full border-4 border-gray-300 mb-4">
+                        <h2 class="text-xl font-semibold">Kyle Sanders, Parent</h2>
+                        <p class="text-gray-500 text-sm">Toronto, Canada</p>
+
+                        <div class="flex items-center justify-center mt-2">
+                            <span class="text-yellow-400">★★★★★</span>
+                            <span class="text-gray-600 text-sm ml-2">(5.0)</span>
+                        </div>
+
+                        <p class="text-gray-700 mt-4 text-sm leading-relaxed">
+                            "My son is much better at speaking in front of others now. He used to be shy, but now he
+                            speaks with confidence."
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Review 9 -->
+                <div class="testimonial-item w-full md:w-1/3 lg:w-1/4 flex-shrink-0 px-4">
+                    <div class="bg-white rounded-xl p-6 flex flex-col items-center text-center text-gray-800 h-full"
+                        style="box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;">
+                        <img src="https://randomuser.me/api/portraits/women/59.jpg" alt="Sophia Garcia"
+                            class="w-16 h-16 rounded-full border-4 border-gray-300 mb-4">
+                        <h2 class="text-xl font-semibold">Raj Malhotra, Parent</h2>
+                        <p class="text-gray-500 text-sm">New Jersey</p>
+
+                        <div class="flex items-center justify-center mt-2">
+                            <span class="text-yellow-400">★★★★☆</span>
+                            <span class="text-gray-600 text-sm ml-2">(4.0)</span>
+                        </div>
+
+                        <p class="text-gray-700 mt-4 text-sm leading-relaxed">
+                            "This program helped my daughter become more confident. She is now comfortable speaking in
+                            front of people."
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Review 10 -->
+                <div class="testimonial-item w-full md:w-1/3 lg:w-1/4 flex-shrink-0 px-4">
+                    <div class="bg-white rounded-xl p-6 flex flex-col items-center text-center text-gray-800 h-full"
+                        style="box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;">
+                        <img src="https://randomuser.me/api/portraits/men/54.jpg" alt="James Wilson"
+                            class="w-16 h-16 rounded-full border-4 border-gray-300 mb-4">
+                        <h2 class="text-xl font-semibold">Ava Mitchell, Parent</h2>
+                        <p class="text-gray-500 text-sm">Texas</p>
+
+                        <div class="flex items-center justify-center mt-2">
+                            <span class="text-yellow-400">★★★★★</span>
+                            <span class="text-gray-600 text-sm ml-2">(5.0)</span>
+                        </div>
+
+                        <p class="text-gray-700 mt-4 text-sm leading-relaxed">
+                            "I can see such a big difference in my son. He speaks clearly and confidently now. Takes the
+                            first foot forward and initiates conversation with people and friends"
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Review 11 -->
+                <div class="testimonial-item w-full md:w-1/3 lg:w-1/4 flex-shrink-0 px-4">
+                    <div class="bg-white rounded-xl p-6 flex flex-col items-center text-center text-gray-800 h-full"
+                        style="box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;">
+                        <img src="https://randomuser.me/api/portraits/women/86.jpg" alt="Olivia Thompson"
+                            class="w-16 h-16 rounded-full border-4 border-gray-300 mb-4">
+                        <h2 class="text-xl font-semibold">Anjali Kapoor, Parent</h2>
+                        <p class="text-gray-500 text-sm">California</p>
+
+                        <div class="flex items-center justify-center mt-2">
+                            <span class="text-yellow-400">★★★★★</span>
+                            <span class="text-gray-600 text-sm ml-2">(5.0)</span>
+                        </div>
+
+                        <p class="text-gray-700 mt-4 text-sm leading-relaxed">
+                            "Teacher Vartika made a big difference. My daughter is no longer afraid of public speaking
+                            and does it with ease."
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Review 12 -->
+                <div class="testimonial-item w-full md:w-1/3 lg:w-1/4 flex-shrink-0 px-4">
+                    <div class="bg-white rounded-xl p-6 flex flex-col items-center text-center text-gray-800 h-full"
+                        style="box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;">
+                        <img src="https://randomuser.me/api/portraits/men/22.jpg" alt="Thomas Lee"
+                            class="w-16 h-16 rounded-full border-4 border-gray-300 mb-4">
+                        <h2 class="text-xl font-semibold">Rani Kapoor, Parent</h2>
+                        <p class="text-gray-500 text-sm">California</p>
+
+                        <div class="flex items-center justify-center mt-2">
+                            <span class="text-yellow-400">★★★★★</span>
+                            <span class="text-gray-600 text-sm ml-2">(5.0)</span>
+                        </div>
+
+                        <p class="text-gray-700 mt-4 text-sm leading-relaxed">
+                            "My daughter is was shy and even at home when we used to ask formal daily things she used to
+                            talk in one words. But now? Now she is the one in room who always ensures speaking her
+                            thoughts clealry. Teacher Vartika's lessons really helped her."
+                        </p>
+                    </div>
+                </div>
+
+
+
+                <!-- Review 13 -->
+                <div class="testimonial-item w-full md:w-1/3 lg:w-1/4 flex-shrink-0 px-4">
+                    <div class="bg-white rounded-xl p-6 flex flex-col items-center text-center text-gray-800 h-full"
+                        style="box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;">
+                        <img src="https://randomuser.me/api/portraits/men/22.jpg" alt="Thomas Lee"
+                            class="w-16 h-16 rounded-full border-4 border-gray-300 mb-4">
+                        <h2 class="text-xl font-semibold">Michael Roberts, Parent</h2>
+                        <p class="text-gray-500 text-sm">Ontario, Canada</p>
+
+                        <div class="flex items-center justify-center mt-2">
+                            <span class="text-yellow-400">★★★★★</span>
+                            <span class="text-gray-600 text-sm ml-2">(5.0)</span>
+                        </div>
+
+                        <p class="text-gray-700 mt-4 text-sm leading-relaxed">
+                            "My son is now more confident in his communication. He can speak clearly and express his
+                            thoughts better."
+                        </p>
+                    </div>
+                </div>
+
+
+                <!-- Review 14 -->
+                <div class="testimonial-item w-full md:w-1/3 lg:w-1/4 flex-shrink-0 px-4">
+                    <div class="bg-white rounded-xl p-6 flex flex-col items-center text-center text-gray-800 h-full"
+                        style="box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;">
+                        <img src="https://randomuser.me/api/portraits/men/22.jpg" alt="Thomas Lee"
+                            class="w-16 h-16 rounded-full border-4 border-gray-300 mb-4">
+                        <h2 class="text-xl font-semibold">Neelam Bhatti, Parent</h2>
+                        <p class="text-gray-500 text-sm">Boston</p>
+
+                        <div class="flex items-center justify-center mt-2">
+                            <span class="text-yellow-400">★★★★★</span>
+                            <span class="text-gray-600 text-sm ml-2">(5.0)</span>
+                        </div>
+
+                        <p class="text-gray-700 mt-4 text-sm leading-relaxed">
+                            "Teacher Samiksha helped my son improve his communication skills. He is now more confident
+                            when speaking in class and regularly participates in debate competitions."
+                        </p>
+                    </div>
+                </div>
+
+
+                <!-- Review 15 -->
+                <div class="testimonial-item w-full md:w-1/3 lg:w-1/4 flex-shrink-0 px-4">
+                    <div class="bg-white rounded-xl p-6 flex flex-col items-center text-center text-gray-800 h-full"
+                        style="box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;">
+                        <img src="https://randomuser.me/api/portraits/men/22.jpg" alt="Thomas Lee"
+                            class="w-16 h-16 rounded-full border-4 border-gray-300 mb-4">
+                        <h2 class="text-xl font-semibold">Sarah Cooper, Parent</h2>
+                        <p class="text-gray-500 text-sm">Austin</p>
+
+                        <div class="flex items-center justify-center mt-2">
+                            <span class="text-yellow-400">★★★★★</span>
+                            <span class="text-gray-600 text-sm ml-2">(5.0)</span>
+                        </div>
+
+                        <p class="text-gray-700 mt-4 text-sm leading-relaxed">
+                            "My son's English has improved so much! He writes and speaks much better now."
+                        </p>
+                    </div>
+                </div>
+
+
+                <!-- Review 16 -->
+                <div class="testimonial-item w-full md:w-1/3 lg:w-1/4 flex-shrink-0 px-4">
+                    <div class="bg-white rounded-xl p-6 flex flex-col items-center text-center text-gray-800 h-full"
+                        style="box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;">
+                        <img src="https://randomuser.me/api/portraits/men/22.jpg" alt="Thomas Lee"
+                            class="w-16 h-16 rounded-full border-4 border-gray-300 mb-4">
+                        <h2 class="text-xl font-semibold">Praveen Kumar, Parent</h2>
+                        <p class="text-gray-500 text-sm">San Francisco</p>
+
+                        <div class="flex items-center justify-center mt-2">
+                            <span class="text-yellow-400">★★★★★</span>
+                            <span class="text-gray-600 text-sm ml-2">(5.0)</span>
+                        </div>
+
+                        <p class="text-gray-700 mt-4 text-sm leading-relaxed">
+                            "I'm really happy with my daughter's progress in English. She writes better and every class
+                            she learns 5 new words that she can use in her daily life, which is a great practice."
+                        </p>
+                    </div>
+                </div>
+
+
+                <!-- Review 17 -->
+                <div class="testimonial-item w-full md:w-1/3 lg:w-1/4 flex-shrink-0 px-4">
+                    <div class="bg-white rounded-xl p-6 flex flex-col items-center text-center text-gray-800 h-full"
+                        style="box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;">
+                        <img src="https://randomuser.me/api/portraits/men/22.jpg" alt="Thomas Lee"
+                            class="w-16 h-16 rounded-full border-4 border-gray-300 mb-4">
+                        <h2 class="text-xl font-semibold">James Miller, Parent</h2>
+                        <p class="text-gray-500 text-sm">Chicago</p>
+
+                        <div class="flex items-center justify-center mt-2">
+                            <span class="text-yellow-400">★★★★★</span>
+                            <span class="text-gray-600 text-sm ml-2">(5.0)</span>
+                        </div>
+
+                        <p class="text-gray-700 mt-4 text-sm leading-relaxed">
+                            "Teacher Samiksha helped my son a lot with his comprehension skills.The best part is teacher
+                            does not tell answers until the last moment she urges student and gives hint to find the
+                            answers"
+                        </p>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Add these styles to your CSS or include inline -->
+<style>
+    .testimonials-carousel-container {
+        position: relative;
+        width: 100%;
+    }
+
+    .testimonials-track {
+        display: flex;
+    }
+
+    /* Animation for continuous scrolling */
+    @keyframes scroll {
+        0% {
+            transform: translateX(0);
+        }
+
+        100% {
+            transform: translateX(calc(-100% / 2));
+            /* Move half the width (12 items, moving by 6) */
+        }
+    }
+
+    .animate-scroll {
+        animation: scroll 60s linear infinite;
+    }
+
+    /* Pause animation on hover */
+    .testimonials-track:hover {
+        animation-play-state: paused;
+    }
+
+    /* Fade overlay styles */
+    .fade-overlay {
+        position: absolute;
+        top: 0;
+        width: 15%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 2;
+    }
+
+    .fade-left {
+        left: 0;
+        background: linear-gradient(to right, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
+    }
+
+    .fade-right {
+        right: 0;
+        background: linear-gradient(to left, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .testimonial-item {
+            width: 85%;
+        }
+
+        .fade-overlay {
+            width: 10%;
+        }
+    }
+
+    @media (min-width: 769px) and (max-width: 1024px) {
+        .testimonial-item {
+            width: 33.333%;
+        }
+    }
+
+    @media (min-width: 1025px) {
+        .testimonial-item {
+            width: 25%;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const track = document.getElementById('testimonialsTrack');
+
+        track.addEventListener('animationiteration', () => {
+            track.style.animation = 'none';
+            track.offsetHeight; /* Trigger reflow */
+            track.style.animation = 'scroll 60s linear infinite';
+        });
+
+        function adjustSpeed() {
+            const width = window.innerWidth;
+            let duration = 60;
+
+            if (width < 768) {
+                duration = 80;
+            } else if (width > 1440) {
+                duration = 50;
+            }
+
+            track.style.animationDuration = `${duration}s`;
+        }
+
+        adjustSpeed();
+        window.addEventListener('resize', adjustSpeed);
+    });
+</script>

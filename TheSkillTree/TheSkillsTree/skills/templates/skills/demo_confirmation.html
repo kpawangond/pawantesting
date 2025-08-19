@@ -1,0 +1,56 @@
+{% load static %}
+{% load tailwind_tags %}
+{% load bootstrap_icons %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Confirmation</title>
+    {% tailwind_css %}
+</head>
+
+<body class="bg-gradient-to-t from-blue-50 to-white h-[100vh]">
+    {% include 'skills/navbar.html' %}
+
+    <div class="container mx-auto px-4 py-8 mt-6">
+        <div class="max-w-md mx-auto bg-white rounded-lg p-8" style="box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;">
+            <div class="text-center">
+                <div
+                    class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-500 text-white mb-4">
+                    {% bs_icon 'check-circle-fill' size='32px' extra_classes="text-white" %}
+                </div>
+
+                <h1 class="text-2xl font-bold text-gray-800 mb-2">Booking Confirmed!</h1>
+                <p class="text-gray-600 mb-6">Thank you for booking a demo class with us.</p>
+
+                <div class="bg-blue-50 rounded-lg p-4 mb-6">
+                    <h2 class="text-lg font-semibold text-blue-800 mb-2">Booking Details</h2>
+
+                    <div class="text-left space-y-2 text-gray-700">
+                        <p><span class="font-medium">Student:</span> {{ booking.student_name }}</p>
+                        <p><span class="font-medium">Grade:</span> {{ booking.get_grade_display }}</p>
+                        <p><span class="font-medium">Date:</span> {{ booking.booking_date|date:"F j, Y" }}</p>
+                        <p><span class="font-medium">Time:</span> {{ booking.booking_time|time:"g:i A" }}</p>
+                        <p><span class="font-medium">Parent:</span> {{ booking.parent_name }}</p>
+                        <p><span class="font-medium">Email:</span> {{ booking.email }}</p>
+                    </div>
+                </div>
+
+                <p class="text-sm text-gray-500 mb-6">
+                    Our team will contact you within 12 hours with further instructions. Please check your email inbox
+                    for updates.
+                </p>
+
+                <a href="{% url 'home' %}"
+                    class="inline-block bg-blue-500 hover:bg-blue-600 text-white py-2 px-6 rounded-md transition-colors">
+                    Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,38 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Mathematics Courses</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    {% tailwind_css %}
+</head>
+
+<body class="bg-white leading-normal tracking-normal">
+
+    {% include 'skills/navbar.html' %}
+
+    {% include 'skills/CoursesPage/heroSection.html' %}
+
+    {% include 'skills/CoursesPage/separator.html' %}
+
+    {% include 'skills/CoursesPage/Math/gradeAcceleration.html' %}
+
+    {% include 'skills/CoursesPage/Math/modularMath.html' %}
+
+    {% include 'skills/CoursesPage/Math/SAT.html' %}
+
+    {% include 'skills/CoursesPage/Math/kangaroo.html' %}
+
+    {% include 'skills/CoursesPage/Math/whyChooseUs.html' %}
+
+    {% include 'skills/footer.html' %}
+
+
+
+
+</body>
+
+</html>
